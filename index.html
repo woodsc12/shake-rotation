@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Longevity Shake Rotation</title>
+
+<style>
+/* =========================
+   BASIC PAGE STYLING
+   ========================= */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    text-align: center;
+    padding: 40px;
+}
+
+/* Main card container */
+.card {
+    background: white;
+    max-width: 600px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Fade animation */
+.fade {
+    opacity: 0;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.generate-btn {
+    background-color: #2e7d32;
+    color: white;
+}
+
+.reset-btn {
+    background-color: #c62828;
+    color: white;
+}
+
+/* History panel */
+.history {
+    margin-top: 30px;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+</style>
+</head>
+<body>
+
+<h1>Longevity Shake Rotation System</h1>
+
+<div class="card" id="shakeCard">
+    <h2 id="weekTitle">Week 1</h2>
+    <div id="ingredients"></div>
+
+    <button class="generate-btn" onclick="generateWeek()">Generate Next Week</button>
+    <button class="reset-btn" onclick="resetCycle()">Reset Cycle</button>
+</div>
+
+<div class="history">
+    <h3>History</h3>
+    <ul id="historyList"></ul>
+</div>
+
+<script>
+/* ====================================================
+   MASTER FOOD POOLS (4-week structured rotation)
+   ==================================================== */
+
+/* Vegetables divided by category
+   We rotate 1 from each category per week */
+
+const leafyGreens = [
+    "Spinach",
+    "Kale",
+    "Swiss Chard",
+    "Arugula"
+];
+
+const cruciferous = [
+    "Broccoli",
+    "Red Cabbage",
+    "Brussels Sprouts",
+    "Cauliflower"
+];
+
+const antioxidantVeg = [
+    "Beets",
+    "Carrots",
+    "Red Bell Pepper",
+    "Zucchini"
+];
+
+/* Fruits (9 total, 2 per week, controlled offset rotation) */
+const fruits = [
+    "Blueberries",
+    "Strawberries",
+    "Blackberries",
+    "Pomegranate",
+    "Apple",
+    "Orange",
+    "Pineapple",
+    "Mango",
+    "Kiwi"
+];
+
+/* Roots (9 total, 2 per week) */
+const roots = [
+    "Turmeric Root",
+    "Ginger Root",
+    "Maca Root",
+    "Burdock Root",
+    "Dandelion Root",
+    "Galangal",
+    "Parsley Root",
+    "Horseradish Root",
+    "Lotus Root"
+];
+
+/* Seeds (9 total, 2 per week) */
+const seeds = [
+    "Brown Flaxseed",
+    "Chia Seeds",
+    "Hemp Seeds",
+    "Pumpkin Seeds",
+    "Sesame Seeds",
+    "Black Sesame",
+    "Sunflower Seeds",
+    "Basil Seeds",
+    "Nigella Seeds"
+];
+
+/* ====================================================
+   LOAD SAVED DATA FROM LOCAL STORAGE
+   ==================================================== */
+
+let currentWeek = localStorage.getItem("currentWeek")
+    ? parseInt(localStorage.getItem("currentWeek"))
+    : 0;
+
+let history = localStorage.getItem("shakeHistory")
+    ? JSON.parse(localStorage.getItem("shakeHistory"))
+    : [];
+
+/* ====================================================
+   MAIN GENERATION FUNCTION
+   ==================================================== */
+
+function generateWeek() {
+
+    const card = document.getElementById("shakeCard");
+    card.classList.add("fade"); // Trigger fade animation
+
+    setTimeout(() => {
+
+        // Ensure 4-week cycle (0–3)
+        const weekIndex = currentWeek % 4;
+
+        // Category-balanced vegetable selection
+        const veg1 = leafyGreens[weekIndex];
+        const veg2 = cruciferous[weekIndex];
+        const veg3 = antioxidantVeg[weekIndex];
+
+        // Controlled fruit rotation (offset math spreads usage)
+        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
+        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
+
+        // Controlled root rotation
+        const root1 = roots[(weekIndex * 2) % roots.length];
+        const root2 = roots[(weekIndex * 2 + 1) % roots.length];
+
+        // Controlled seed rotation
+        const seed1 = seeds[(weekIndex * 2) % seeds.length];
+        const seed2 = seeds[(weekIndex * 2 + 1) % seeds.length];
+
+        const weekData = {
+            week: weekIndex + 1,
+            vegetables: [veg1, veg2, veg3],
+            fruits: [fruit1, fruit2],
+            roots: [root1, root2],
+            seeds: [seed1, seed2]
+        };
+
+        displayWeek(weekData);
+        saveHistory(weekData);
+
+        currentWeek++;
+        localStorage.setItem("currentWeek", currentWeek);
+
+        card.classList.remove("fade");
+
+    }, 300);
+}
+
+/* ====================================================
+   DISPLAY WEEK DATA
+   ==================================================== */
+
+function displayWeek(data) {
+
+    document.getElementById("weekTitle").innerText = "Week " + data.week;
+
+    document.getElementById("ingredients").innerHTML = `
+        <p><strong>Vegetables:</strong> ${data.vegetables.join(", ")}</p>
+        <p><strong>Fruits:</strong> ${data.fruits.join(", ")}</p>
+        <p><strong>Roots:</strong> ${data.roots.join(", ")}</p>
+        <p><strong>Seeds:</strong> ${data.seeds.join(", ")}</p>
+    `;
+}
+
+/* ====================================================
+   SAVE & DISPLAY HISTORY
+   ==================================================== */
+
+function saveHistory(data) {
+
+    history.push(data);
+
+    localStorage.setItem("shakeHistory", JSON.stringify(history));
+
+    renderHistory();
+}
+
+function renderHistory() {
+
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+
+    history.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText =
+            `Week ${item.week}: ` +
+            `${item.vegetables.join(", ")} | ` +
+            `${item.fruits.join(", ")} | ` +
+            `${item.roots.join(", ")} | ` +
+            `${item.seeds.join(", ")}`;
+        list.appendChild(li);
+    });
+}
+
+/* ====================================================
+   RESET FUNCTION
+   ==================================================== */
+
+function resetCycle() {
+
+    if (confirm("Reset the entire 4-week cycle?")) {
+        localStorage.clear();
+        currentWeek = 0;
+        history = [];
+        renderHistory();
+        document.getElementById("ingredients").innerHTML = "";
+        document.getElementById("weekTitle").innerText = "Week 1";
+    }
+}
+
+/* ====================================================
+   INITIAL LOAD
+   ==================================================== */
+
+renderHistory();
+
+</script>
+
+</body>
+</html>
