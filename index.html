@@ -87,6 +87,7 @@ button:hover {
    border: 1px solid #2e7d32;
    border-radius: 8px;
    display: inlinve-block;
+   cursor: pointer;
 }
    
 </style>
@@ -104,7 +105,7 @@ button:hover {
 </div>
 
 <div class="history">
-    <h3>History</h3>
+    <h3 id="historyToggle" onclick="toggleHistory()">History</h3>
     <ul id="historyList"></ul>
 </div>
 
@@ -298,6 +299,19 @@ function resetCycle() {
 }
 
 /* ====================================================
+   TOGGLE HISTORY
+   ==================================================== */
+function toggleHistory() {
+   const historyList = document.getElementBYId("historyList");
+
+   if (historyList.style.display === "none") {
+       historyList.style.display = "block";
+   } else {
+       historyList.style.display = "none";
+   }
+}
+
+/* ====================================================
    INITIAL LOAD
    ==================================================== */
 
@@ -307,6 +321,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
