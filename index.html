@@ -106,7 +106,7 @@ button:hover {
 
 <div class="history">
     <h3 id="historyToggle" onclick="toggleHistory()">History</h3>
-    <ul id="historyList"></ul>
+    <ul id="historyList" style="display: none;"></ul>
 </div>
 
 <script>
@@ -302,13 +302,13 @@ function resetCycle() {
    TOGGLE HISTORY
    ==================================================== */
 function toggleHistory() {
-   const historyList = document.getElementBYId("historyList");
+    const historyList = document.getElementById("historyList");
 
-   if (historyList.style.display === "none") {
+    if (historyList.style.display === "none") {
        historyList.style.display = "block";
-   } else {
+    } else {
        historyList.style.display = "none";
-   }
+    }
 }
 
 /* ====================================================
@@ -321,6 +321,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
