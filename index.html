@@ -89,7 +89,26 @@ button:hover {
    display: inlinve-block;
    cursor: pointer;
 }
-   
+
+/* Clickable ingredient styling */
+.ingredient {
+    cursor: pointer;
+    display: inline-block;
+    margin: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.ingredient:hover {
+    background: #e0f2f1;
+}
+
+.selected {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
 </style>
 </head>
 <body>
@@ -102,6 +121,15 @@ button:hover {
 
     <button class="generate-btn" onclick="generateWeek()">Generate Next Week</button>
     <button class="reset-btn" onclick="resetCycle()">Reset Cycle</button>
+</div>
+
+<!-- ===========================
+     Nutrient Intelligence Panel
+     =========================== -->
+<div class="card" id="nutrientPanel" style="display:none;">
+    <h2>Nutrient Intelligence</h2>
+    <div id="nutrientContent"></div>
+    <button onclick="clearSelection()">Clear Selection</button>
 </div>
 
 <div class="history">
@@ -176,6 +204,128 @@ const seeds = [
 ];
 
 /* ====================================================
+   NUTRIENT DATABASE (Intensity Included)
+   ==================================================== */
+
+const nutrientDB = {
+
+    "Spinach": {
+        organs: ["Brain", "Liver", "Heart"],
+        nutrients: {
+            iron: "high",
+            folate: "high",
+            magnesium: "moderate",
+            vitamin_k: "high"
+        }
+    },
+
+    "Blueberries": {
+        organs: ["Brain", "Cardiovascular"],
+        nutrients: {
+            vitamin_c: "moderate",
+            anthocyanins: "high",
+            fiber: "moderate"
+        }
+    },
+
+    "Broccoli": {
+        organs: ["Liver", "Brain", "Cellular"],
+        nutrients: {
+            sulforaphane: "high",
+            vitamin_c: "high",
+            fiber: "moderate"
+        }
+    },
+
+    "Red Bell Pepper": {
+        organs: ["Immune", "Skin", "Brain"],
+        nutrients: {
+            vitamin_c: "very high",
+            beta_carotene: "moderate"
+        }
+    }
+
+};
+
+/* ====================================================
+   SELECTION + DYNAMIC CALCULATION ENGINE
+   ==================================================== */
+
+let selectedItems = [];
+
+// Handle selecting/unselecting ingredients
+function toggleSelect(element, itemName) {
+
+    if (selectedItems.includes(itemName)) {
+        selectedItems = selectedItems.filter(i => i !== itemName);
+        element.classList.remove("selected");
+    } else {
+        if (selectedItems.length >= 3) return; // limit to 3
+        selectedItems.push(itemName);
+        element.classList.add("selected");
+    }
+
+    updateNutrientPanel();
+}
+
+// Clear all selections
+function clearSelection() {
+    selectedItems = [];
+    document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
+    document.getElementById("nutrientPanel").style.display = "none";
+}
+
+/* ====================================================
+   DYNAMIC NUTRIENT CALCULATION
+   ==================================================== */
+   
+function updateNutrientPanel() {
+
+    if (selectedItems.length === 0) {
+        document.getElementById("nutrientPanel").style.display = "none";
+        return;
+    }
+
+    document.getElementById("nutrientPanel").style.display = "block";
+
+    let organMap = {};
+    let nutrientMap = {};
+
+    selectedItems.forEach(item => {
+
+        const data = nutrientDB[item];
+        if (!data) return;
+
+        // Count organ frequency
+        data.organs.forEach(org => {
+            organMap[org] = (organMap[org] || 0) + 1;
+        });
+
+        // Merge nutrients
+        for (let nutrient in data.nutrients) {
+            nutrientMap[nutrient] = data.nutrients[nutrient];
+        }
+    });
+
+    // Build organ display
+    const organList = Object.keys(organMap)
+        .sort((a, b) => organMap[b] - organMap[a])
+        .join(", ");
+
+    // Build nutrient display
+    const nutrientList = Object.entries(nutrientMap)
+        .map(([key, val]) => `${key} (${val})`)
+        .join("<br>");
+
+    document.getElementById("nutrientContent").innerHTML = `
+        <h3>Supports:</h3>
+        <p>${organList}</p>
+        <h3>Key Nutrients:</h3>
+        <p>${nutrientList}</p>
+    `;
+}
+
+/* ====================================================
    LOAD SAVED DATA FROM LOCAL STORAGE
    ==================================================== */
 
@@ -245,12 +395,19 @@ function displayWeek(data) {
 
     document.getElementById("weekTitle").innerText = "Week " + data.week;
 
-    document.getElementById("ingredients").innerHTML = `
-        <p><strong>Vegetables:</strong> ${data.vegetables.join(", ")}</p>
-        <p><strong>Fruits:</strong> ${data.fruits.join(", ")}</p>
-        <p><strong>Roots:</strong> ${data.roots.join(", ")}</p>
-        <p><strong>Seeds:</strong> ${data.seeds.join(", ")}</p>
-    `;
+    // Combine all items into one array
+    const allItems = [
+        ...data.vegetables,
+        ...data.fruits,
+        ...data.roots,
+        ...data.seeds
+    ];
+
+    // Render clickable ingredients
+    document.getElementById("ingredients").innerHTML =
+        allItems.map(item =>
+            `<span class="ingredient" onclick="toggleSelect(this, '${item}')">${item}</span>`
+        ).join(" ");
 }
 
 /* ====================================================
@@ -322,6 +479,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
