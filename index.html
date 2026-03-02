@@ -90,23 +90,41 @@ button:hover {
    cursor: pointer;
 }
 
-/* Clickable ingredient styling */
+/* Ingredient container layout */
+.category {
+    margin-bottom: 12px;
+}
+
+/* Ingredient grid layout */
+.ingredient-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* Ingredient chip style */
 .ingredient {
     cursor: pointer;
-    display: inline-block;
-    margin: 4px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: background 0.2s ease;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: 1px solid #2e7d32;
+    background: #f5f5f5;
+    font-size: 13px;
+    transition: all 0.2s ease;
 }
 
+/* Hover effect to indicate clickability */
 .ingredient:hover {
-    background: #e0f2f1;
+    background: #c8e6c9;
+    transform: translateY(-1px);
 }
 
+/* Selected state */
 .selected {
-    background: #c8e6c9;
-    font-weight: bold;
+    background: #2e7d32;
+    color: white;
+    border-color: #2e7d32;
 }
 
 </style>
@@ -117,6 +135,7 @@ button:hover {
 
 <div class="card" id="shakeCard">
     <h2 id="weekTitle">Week 1</h2>
+    <p style="font-size:12px; opacity:0.6;">Click up to 3 ingredients to analyze nutrient synergy</p>
     <div id="ingredients"></div>
 
     <button class="generate-btn" onclick="generateWeek()">Generate Next Week</button>
@@ -395,19 +414,24 @@ function displayWeek(data) {
 
     document.getElementById("weekTitle").innerText = "Week " + data.week;
 
-    // Combine all items into one array
-    const allItems = [
-        ...data.vegetables,
-        ...data.fruits,
-        ...data.roots,
-        ...data.seeds
-    ];
+    function renderCategory(label, items) {
+        return `
+            <div class="category">
+                <strong>${label}:</strong>
+                <div class="ingredient-group">
+                    ${items.map(item =>
+                        `<span class="ingredient" onclick="toggleSelect(this, '${item}')">${item}</span>`
+                    ).join("")}
+                </div>
+            </div>
+        `;
+    }
 
-    // Render clickable ingredients
     document.getElementById("ingredients").innerHTML =
-        allItems.map(item =>
-            `<span class="ingredient" onclick="toggleSelect(this, '${item}')">${item}</span>`
-        ).join(" ");
+        renderCategory("Vegetables", data.vegetables) +
+        renderCategory("Fruits", data.fruits) +
+        renderCategory("Roots", data.roots) +
+        renderCategory("Seeds", data.seeds);
 }
 
 /* ====================================================
@@ -479,6 +503,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
