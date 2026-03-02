@@ -223,10 +223,12 @@ const seeds = [
 ];
 
 /* ====================================================
-   NUTRIENT DATABASE (Intensity Included)
+   FULL NUTRIENT DATABASE
    ==================================================== */
 
 const nutrientDB = {
+
+    /* ================= VEGETABLES ================= */
 
     "Spinach": {
         organs: ["Brain", "Liver", "Heart"],
@@ -234,16 +236,37 @@ const nutrientDB = {
             iron: "high",
             folate: "high",
             magnesium: "moderate",
-            vitamin_k: "high"
+            vitamin_k: "high",
+            lutein: "moderate"
         }
     },
 
-    "Blueberries": {
-        organs: ["Brain", "Cardiovascular"],
+    "Kale": {
+        organs: ["Heart", "Liver", "Cellular"],
         nutrients: {
-            vitamin_c: "moderate",
-            anthocyanins: "high",
+            vitamin_k: "very high",
+            vitamin_c: "high",
+            beta_carotene: "high",
             fiber: "moderate"
+        }
+    },
+
+    "Swiss Chard": {
+        organs: ["Heart", "Brain", "Blood"],
+        nutrients: {
+            magnesium: "high",
+            potassium: "moderate",
+            vitamin_k: "high",
+            iron: "moderate"
+        }
+    },
+
+    "Arugula": {
+        organs: ["Cardiovascular", "Liver"],
+        nutrients: {
+            nitrates: "high",
+            vitamin_k: "moderate",
+            folate: "moderate"
         }
     },
 
@@ -256,11 +279,200 @@ const nutrientDB = {
         }
     },
 
+    "Red Cabbage": {
+        organs: ["Brain", "Cardiovascular"],
+        nutrients: {
+            anthocyanins: "high",
+            vitamin_c: "moderate",
+            fiber: "moderate"
+        }
+    },
+
+    "Brussels Sprouts": {
+        organs: ["Liver", "Gut"],
+        nutrients: {
+            sulforaphane: "moderate",
+            fiber: "high",
+            vitamin_k: "high"
+        }
+    },
+
+    "Cauliflower": {
+        organs: ["Liver", "Gut"],
+        nutrients: {
+            sulforaphane: "moderate",
+            fiber: "moderate",
+            vitamin_c: "moderate"
+        }
+    },
+
+    "Beets": {
+        organs: ["Cardiovascular", "Brain"],
+        nutrients: {
+            nitrates: "high",
+            betalains: "high",
+            folate: "moderate"
+        }
+    },
+
+    "Carrots": {
+        organs: ["Eyes", "Immune"],
+        nutrients: {
+            beta_carotene: "very high",
+            fiber: "moderate"
+        }
+    },
+
     "Red Bell Pepper": {
         organs: ["Immune", "Skin", "Brain"],
         nutrients: {
             vitamin_c: "very high",
             beta_carotene: "moderate"
+        }
+    },
+
+    "Zucchini": {
+        organs: ["Gut", "Heart"],
+        nutrients: {
+            vitamin_c: "moderate",
+            potassium: "moderate",
+            fiber: "low"
+        }
+    },
+
+    "Cucumber": {
+        organs: ["Hydration", "Skin"],
+        nutrients: {
+            vitamin_k: "low",
+            antioxidants: "low"
+        }
+    },
+
+    /* ================= FRUITS ================= */
+
+    "Blueberries": {
+        organs: ["Brain", "Cardiovascular"],
+        nutrients: {
+            anthocyanins: "very high",
+            vitamin_c: "moderate",
+            fiber: "moderate"
+        }
+    },
+
+    "Apple": {
+        organs: ["Gut", "Heart"],
+        nutrients: {
+            quercetin: "moderate",
+            fiber: "high",
+            vitamin_c: "low"
+        }
+    },
+
+    "Blackberries": {
+        organs: ["Brain", "Gut"],
+        nutrients: {
+            anthocyanins: "high",
+            fiber: "high",
+            vitamin_c: "moderate"
+        }
+    },
+
+    "Pomegranate": {
+        organs: ["Heart", "Cellular"],
+        nutrients: {
+            punicalagins: "very high",
+            antioxidants: "high"
+        }
+    },
+
+    "Rasberries": {
+        organs: ["Gut", "Brain"],
+        nutrients: {
+            fiber: "very high",
+            vitamin_c: "moderate",
+            ellagic_acid: "moderate"
+        }
+    },
+
+    "Grapefruit": {
+        organs: ["Liver", "Cardiovascular"],
+        nutrients: {
+            vitamin_c: "high",
+            naringin: "high",
+            fiber: "moderate"
+        }
+    },
+
+    "Orange": {
+        organs: ["Immune", "Cardiovascular"],
+        nutrients: {
+            vitamin_c: "high",
+            hesperidin: "moderate",
+            fiber: "moderate"
+        }
+    },
+
+    "Kiwi": {
+        organs: ["Immune", "Gut"],
+        nutrients: {
+            vitamin_c: "very high",
+            fiber: "moderate",
+            vitamin_k: "moderate"
+        }
+    },
+
+    /* ================= ROOTS ================= */
+
+    "Turmeric Root + black pepper": {
+        organs: ["Brain", "Liver", "Joints"],
+        nutrients: {
+            curcumin: "high",
+            antioxidants: "high"
+        }
+    },
+
+    "Garlic": {
+        organs: ["Heart", "Immune"],
+        nutrients: {
+            allicin: "high",
+            sulfur_compounds: "high"
+        }
+    },
+
+    "Ginger Root": {
+        organs: ["Gut", "Brain"],
+        nutrients: {
+            gingerols: "high",
+            antioxidants: "moderate"
+        }
+    },
+
+    "Burdock Root": {
+        organs: ["Liver", "Gut"],
+        nutrients: {
+            inulin: "high",
+            antioxidants: "moderate",
+            fiber: "moderate"
+        }
+    },
+
+    /* ================= SEEDS ================= */
+
+    "Brown Flaxseed": {
+        organs: ["Heart", "Gut", "Brain"],
+        nutrients: {
+            omega_3: "high",
+            lignans: "high",
+            fiber: "high"
+        }
+    },
+
+    "Pumpkin Seeds": {
+        organs: ["Prostate", "Brain", "Immune"],
+        nutrients: {
+            magnesium: "high",
+            zinc: "moderate",
+            iron: "moderate"
         }
     }
 
@@ -503,6 +715,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
