@@ -90,12 +90,11 @@ button:hover {
    cursor: pointer;
 }
 
-/* Ingredient container layout */
+/* Ingredient layout */
 .category {
     margin-bottom: 12px;
 }
 
-/* Ingredient grid layout */
 .ingredient-group {
     display: flex;
     flex-wrap: wrap;
@@ -103,7 +102,7 @@ button:hover {
     margin-top: 6px;
 }
 
-/* Ingredient chip style */
+/* Default ingredient chip */
 .ingredient {
     cursor: pointer;
     padding: 6px 10px;
@@ -111,18 +110,12 @@ button:hover {
     border: 1px solid #2e7d32;
     background: #f5f5f5;
     font-size: 13px;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* Hover effect to indicate clickability */
-.ingredient:hover {
-    background: #c8e6c9;
-    transform: translateY(-1px);
-}
-
-/* Selected state */
+/* Selected state only */
 .selected {
-    background: #2e7d32;
+    background: #2e7d32;  /* Dark green */
     color: white;
     border-color: #2e7d32;
 }
@@ -487,14 +480,22 @@ let selectedItems = [];
 // Handle selecting/unselecting ingredients
 function toggleSelect(element, itemName) {
 
+    // If already selected → unselect
     if (selectedItems.includes(itemName)) {
         selectedItems = selectedItems.filter(i => i !== itemName);
         element.classList.remove("selected");
-    } else {
-        if (selectedItems.length >= 3) return; // limit to 3
-        selectedItems.push(itemName);
-        element.classList.add("selected");
+        updateNutrientPanel();
+        return;
     }
+
+    // If trying to add a 4th → do nothing
+    if (selectedItems.length >= 3) {
+        return;
+    }
+
+    // Otherwise select it
+    selectedItems.push(itemName);
+    element.classList.add("selected");
 
     updateNutrientPanel();
 }
@@ -715,6 +716,7 @@ renderHistory();
 
 </body>
 </html>
+
 
 
 
