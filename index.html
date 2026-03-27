@@ -422,7 +422,7 @@ const roots = [
     "Turmeric Root + black pepper", "Garlic", "Ginger Root", "Burdock Root"
 ];
 
-const seeds = ["Brown Flaxseed", "Pumpkin Seeds"];
+const seeds = ["Brown Flaxseed", "Pumpkin Seeds", "Brazil Nuts"];
 
 /* ====================================================
    FULL NUTRIENT DATABASE
@@ -459,7 +459,8 @@ const nutrientDB = {
     "Burdock Root":     { organs: ["Liver", "Gut"],                      nutrients: { inulin: "high", antioxidants: "moderate", fiber: "moderate" } },
 
     "Brown Flaxseed":   { organs: ["Heart", "Gut", "Brain"],             nutrients: { omega_3: "high", lignans: "high", fiber: "high" } },
-    "Pumpkin Seeds":    { organs: ["Prostate", "Brain", "Immune"],       nutrients: { magnesium: "high", zinc: "moderate", iron: "moderate" } }
+    "Pumpkin Seeds":    { organs: ["Prostate", "Brain", "Immune"],       nutrients: { magnesium: "high", zinc: "moderate", iron: "moderate" } },
+    "Brazil Nuts":      { organs: ["Brain", "Heart", "Immune", "Cellular"], nutrients: { selenium: "very high", vitamin_e: "high", antioxidants: "high", magnesium: "moderate" } }
 };
 
 /* ====================================================
@@ -969,13 +970,14 @@ function generateWeek() {
         const root2  = roots[(weekIndex * 2 + 1) % roots.length];
         const seed1  = seeds[(weekIndex * 2) % seeds.length];
         const seed2  = seeds[(weekIndex * 2 + 1) % seeds.length];
+        const seed3  = seeds[2]; // Brazil Nuts - always index 2, appears in all 4 weeks
 
         const weekData = {
             week: weekIndex + 1,
             vegetables: [veg1, veg2, veg3],
             fruits: [fruit1, fruit2],
             roots: [root1, root2],
-            seeds: [seed1, seed2]
+            seeds: [seed1, seed2, seed3]
         };
 
         // Clear organ highlights/selections and reset scope when new week loads
@@ -1089,8 +1091,3 @@ renderHistory();
 </script>
 </body>
 </html>
-
-
-
-
-
