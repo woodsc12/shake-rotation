@@ -968,16 +968,13 @@ function generateWeek() {
         const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
         const root1  = roots[(weekIndex * 2) % roots.length];
         const root2  = roots[(weekIndex * 2 + 1) % roots.length];
-        const seed1  = seeds[(weekIndex * 2) % seeds.length];
-        const seed2  = seeds[(weekIndex * 2 + 1) % seeds.length];
-        const seed3  = seeds[2]; // Brazil Nuts - always index 2, appears in all 4 weeks
 
         const weekData = {
             week: weekIndex + 1,
             vegetables: [veg1, veg2, veg3],
             fruits: [fruit1, fruit2],
             roots: [root1, root2],
-            seeds: [seed1, seed2, seed3]
+            seeds: seeds
         };
 
         // Clear organ highlights/selections and reset scope when new week loads
