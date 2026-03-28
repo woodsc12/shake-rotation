@@ -1045,8 +1045,8 @@ function previousWeek() {
         }
 
         displayWeek(weekData);
+        saveHistory(currentWeek); // Update history to match current week
         localStorage.setItem("currentWeek", currentWeek);
-        renderHistory();
 
         card.classList.remove("fade");
     }, 300);
@@ -1129,8 +1129,10 @@ function getWeekData(weekNumber) {
 }
 
 function saveHistory(weekNumber) {
-    // Ensure history array has entries for weeks 0 through weekNumber
-    for (let i = history.length; i <= weekNumber; i++) {
+    // weekNumber is 0-3 (Week 1-4)
+    // Build history array to contain weeks 0 through weekNumber
+    history = [];
+    for (let i = 0; i <= weekNumber; i++) {
         const weekData = getWeekData(i);
         history.push(weekData);
     }
@@ -1206,9 +1208,11 @@ if (history.length > 0) {
     const weekData = history[currentWeek];
     displayWeek(weekData);
 } else {
-    // No history yet - start fresh on Week 1
+    // No history yet - start fresh on Week 1 with Week 1 in history
     currentWeek = 0;
-    document.getElementById("weekTitle").innerText = "Week 1";
+    saveHistory(0); // Populate history with Week 1 only
+    const weekData = getWeekData(0);
+    displayWeek(weekData);
 }
 
 renderHistory();
@@ -1216,4 +1220,3 @@ renderHistory();
 </script>
 </body>
 </html>
-
