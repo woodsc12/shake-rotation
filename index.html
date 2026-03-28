@@ -338,7 +338,8 @@ button:hover {
     border: 1px solid #ddd;
     color: #333;
     padding: 6px 12px;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: 900;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
@@ -1146,10 +1147,12 @@ function renderHistory() {
     const list = document.getElementById("historyList");
     list.innerHTML = "";
     
-    // Show only history entries up to current week (history.length determines this)
-    const historyToShow = history.slice(0, currentWeek + 1);
+    // Show history entries from index 0 up to currentWeek (inclusive)
+    // currentWeek is 0-indexed, so currentWeek + 1 gives us the week number
+    const numWeeksToShow = currentWeek + 1;
     
-    historyToShow.forEach(item => {
+    for (let i = 0; i < numWeeksToShow && i < history.length; i++) {
+        const item = history[i];
         const li = document.createElement("li");
         li.innerText =
             `Week ${item.week}: ` +
@@ -1158,7 +1161,7 @@ function renderHistory() {
             `${item.roots.join(", ")} | ` +
             `${item.seeds.join(", ")}`;
         list.appendChild(li);
-    });
+    }
 }
 
 /* ====================================================
@@ -1197,12 +1200,19 @@ function toggleHistory() {
 
 buildOrganButtons();
 
-// If history exists, load the current week based on currentWeek
-if (history.length > 0 && currentWeek >= 0 && currentWeek < history.length) {
+// Restore the current week display from history
+if (history.length > 0) {
+    // currentWeek is 0-indexed (0=Week1, 1=Week2, 2=Week3, 3=Week4)
+    // Make sure currentWeek doesn't exceed history length
+    if (currentWeek >= history.length) {
+        currentWeek = history.length - 1;
+        localStorage.setItem("currentWeek", currentWeek);
+    }
     const weekData = history[currentWeek];
     displayWeek(weekData);
-} else if (history.length === 0) {
+} else {
     // No history yet - start fresh on Week 1
+    currentWeek = 0;
     document.getElementById("weekTitle").innerText = "Week 1";
 }
 
