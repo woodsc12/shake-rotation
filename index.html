@@ -402,9 +402,9 @@ button:hover {
      ============================= -->
 <div class="card" id="shakeCard">
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
-        <button class="week-nav-btn" onclick="previousWeek()">←</button>
+        <button class="week-nav-btn" onclick="previousWeek()">«</button>
         <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
-        <button class="week-nav-btn" onclick="nextWeek()">→</button>
+        <button class="week-nav-btn" onclick="nextWeek()">»</button>
     </div>
     <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin-top:0;">
         Click up to 3 ingredients to analyze nutrient synergy
@@ -1032,23 +1032,8 @@ function previousWeek() {
     setTimeout(() => {
         // Wrap: if at week 0 (Week 1), go to week 3 (Week 4)
         currentWeek = currentWeek === 0 ? 3 : currentWeek - 1;
-        const weekIndex = currentWeek % 4;
-
-        const veg1   = leafyGreens[weekIndex];
-        const veg2   = cruciferous[weekIndex];
-        const veg3   = antioxidantVeg[weekIndex];
-        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
-        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
-        const root1  = roots[(weekIndex * 2) % roots.length];
-        const root2  = roots[(weekIndex * 2 + 1) % roots.length];
-
-        const weekData = {
-            week: weekIndex + 1,
-            vegetables: [veg1, veg2, veg3],
-            fruits: [fruit1, fruit2],
-            roots: [root1, root2],
-            seeds: seeds
-        };
+        
+        const weekData = getWeekData(currentWeek);
 
         // Clear organ highlights/selections and reset scope when navigating weeks
         clearManualSelections();
@@ -1074,23 +1059,8 @@ function nextWeek() {
     setTimeout(() => {
         // Wrap: if at week 3 (Week 4), go to week 0 (Week 1)
         currentWeek = currentWeek === 3 ? 0 : currentWeek + 1;
-        const weekIndex = currentWeek % 4;
-
-        const veg1   = leafyGreens[weekIndex];
-        const veg2   = cruciferous[weekIndex];
-        const veg3   = antioxidantVeg[weekIndex];
-        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
-        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
-        const root1  = roots[(weekIndex * 2) % roots.length];
-        const root2  = roots[(weekIndex * 2 + 1) % roots.length];
-
-        const weekData = {
-            week: weekIndex + 1,
-            vegetables: [veg1, veg2, veg3],
-            fruits: [fruit1, fruit2],
-            roots: [root1, root2],
-            seeds: seeds
-        };
+        
+        const weekData = getWeekData(currentWeek);
 
         // Clear organ highlights/selections and reset scope when navigating weeks
         clearManualSelections();
@@ -1102,9 +1072,8 @@ function nextWeek() {
         }
 
         displayWeek(weekData);
-        saveHistory(weekData);
+        saveHistory(currentWeek);
         localStorage.setItem("currentWeek", currentWeek);
-        renderHistory();
 
         card.classList.remove("fade");
     }, 300);
@@ -1137,8 +1106,34 @@ function displayWeek(data) {
    SAVE & DISPLAY HISTORY
    ==================================================== */
 
-function saveHistory(data) {
-    history.push(data);
+function getWeekData(weekNumber) {
+    // weekNumber is 0-3 (Week 1-4)
+    // Generates week data based on the rotation logic
+    const weekIndex = weekNumber % 4;
+    
+    const veg1   = leafyGreens[weekIndex];
+    const veg2   = cruciferous[weekIndex];
+    const veg3   = antioxidantVeg[weekIndex];
+    const fruit1 = fruits[(weekIndex * 2) % fruits.length];
+    const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
+    const root1  = roots[(weekIndex * 2) % roots.length];
+    const root2  = roots[(weekIndex * 2 + 1) % roots.length];
+
+    return {
+        week: weekIndex + 1,
+        vegetables: [veg1, veg2, veg3],
+        fruits: [fruit1, fruit2],
+        roots: [root1, root2],
+        seeds: seeds
+    };
+}
+
+function saveHistory(weekNumber) {
+    // Ensure history array has entries for weeks 0 through weekNumber
+    for (let i = history.length; i <= weekNumber; i++) {
+        const weekData = getWeekData(i);
+        history.push(weekData);
+    }
     localStorage.setItem("shakeHistory", JSON.stringify(history));
     renderHistory();
 }
