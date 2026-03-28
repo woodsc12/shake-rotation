@@ -332,6 +332,29 @@ button:hover {
     border-color: #80cbc4;
 }
 
+/* Week navigation buttons */
+.week-nav-btn {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 6px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.week-nav-btn:hover {
+    background: #2e7d32;
+    color: white;
+    transform: scale(1.05);
+}
+
 </style>
 </head>
 <body>
@@ -377,14 +400,15 @@ button:hover {
      MAIN SHAKE CARD
      ============================= -->
 <div class="card" id="shakeCard">
-    <h2 id="weekTitle">Week 1</h2>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+        <button class="week-nav-btn" onclick="previousWeek()">←</button>
+        <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
+        <button class="week-nav-btn" onclick="nextWeek()">→</button>
+    </div>
     <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin-top:0;">
         Click up to 3 ingredients to analyze nutrient synergy
     </p>
     <div id="ingredients"></div>
-
-    <button class="generate-btn" onclick="generateWeek()">Generate Next Week</button>
-    <button class="reset-btn" onclick="resetCycle()">Reset Cycle</button>
 </div>
 
 <!-- ===========================
@@ -997,8 +1021,93 @@ function generateWeek() {
 }
 
 /* ====================================================
-   DISPLAY WEEK DATA
+   WEEK NAVIGATION FUNCTIONS
    ==================================================== */
+
+function previousWeek() {
+    const card = document.getElementById("shakeCard");
+    card.classList.add("fade");
+
+    setTimeout(() => {
+        // Wrap: if at week 0 (Week 1), go to week 3 (Week 4)
+        currentWeek = currentWeek === 0 ? 3 : currentWeek - 1;
+        const weekIndex = currentWeek % 4;
+
+        const veg1   = leafyGreens[weekIndex];
+        const veg2   = cruciferous[weekIndex];
+        const veg3   = antioxidantVeg[weekIndex];
+        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
+        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
+        const root1  = roots[(weekIndex * 2) % roots.length];
+        const root2  = roots[(weekIndex * 2 + 1) % roots.length];
+
+        const weekData = {
+            week: weekIndex + 1,
+            vegetables: [veg1, veg2, veg3],
+            fruits: [fruit1, fruit2],
+            roots: [root1, root2],
+            seeds: seeds
+        };
+
+        // Clear organ highlights/selections and reset scope when navigating weeks
+        clearManualSelections();
+        clearOrganFilter();
+        if (allWeeksMode) {
+            allWeeksMode = false;
+            document.getElementById("scopeToggleBtn").classList.remove("active");
+            document.getElementById("scopePill").textContent = "OFF";
+        }
+
+        displayWeek(weekData);
+        localStorage.setItem("currentWeek", currentWeek);
+        renderHistory();
+
+        card.classList.remove("fade");
+    }, 300);
+}
+
+function nextWeek() {
+    const card = document.getElementById("shakeCard");
+    card.classList.add("fade");
+
+    setTimeout(() => {
+        // Wrap: if at week 3 (Week 4), go to week 0 (Week 1)
+        currentWeek = currentWeek === 3 ? 0 : currentWeek + 1;
+        const weekIndex = currentWeek % 4;
+
+        const veg1   = leafyGreens[weekIndex];
+        const veg2   = cruciferous[weekIndex];
+        const veg3   = antioxidantVeg[weekIndex];
+        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
+        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
+        const root1  = roots[(weekIndex * 2) % roots.length];
+        const root2  = roots[(weekIndex * 2 + 1) % roots.length];
+
+        const weekData = {
+            week: weekIndex + 1,
+            vegetables: [veg1, veg2, veg3],
+            fruits: [fruit1, fruit2],
+            roots: [root1, root2],
+            seeds: seeds
+        };
+
+        // Clear organ highlights/selections and reset scope when navigating weeks
+        clearManualSelections();
+        clearOrganFilter();
+        if (allWeeksMode) {
+            allWeeksMode = false;
+            document.getElementById("scopeToggleBtn").classList.remove("active");
+            document.getElementById("scopePill").textContent = "OFF";
+        }
+
+        displayWeek(weekData);
+        saveHistory(weekData);
+        localStorage.setItem("currentWeek", currentWeek);
+        renderHistory();
+
+        card.classList.remove("fade");
+    }, 300);
+}
 
 function displayWeek(data) {
     savedCurrentWeekData = data; // save for scope restore
@@ -1036,7 +1145,11 @@ function saveHistory(data) {
 function renderHistory() {
     const list = document.getElementById("historyList");
     list.innerHTML = "";
-    history.forEach(item => {
+    
+    // Show only history entries up to current week (history.length determines this)
+    const historyToShow = history.slice(0, currentWeek + 1);
+    
+    historyToShow.forEach(item => {
         const li = document.createElement("li");
         li.innerText =
             `Week ${item.week}: ` +
@@ -1083,8 +1196,19 @@ function toggleHistory() {
    ==================================================== */
 
 buildOrganButtons();
+
+// If history exists, load the current week based on currentWeek
+if (history.length > 0 && currentWeek >= 0 && currentWeek < history.length) {
+    const weekData = history[currentWeek];
+    displayWeek(weekData);
+} else if (history.length === 0) {
+    // No history yet - start fresh on Week 1
+    document.getElementById("weekTitle").innerText = "Week 1";
+}
+
 renderHistory();
 
 </script>
 </body>
 </html>
+
