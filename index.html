@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shake Rotation</title>
+<title>The Green Cycle</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-/* =========================
-   BASIC PAGE STYLING
-   ========================= */
 body {
     font-family: Arial, sans-serif;
     background: black;
@@ -20,7 +16,6 @@ body {
     line-height: 1.5;
 }
 
-/* Main card container */
 .card {
     background: white;
     max-width: 600px;
@@ -33,10 +28,7 @@ body {
     transition: opacity 0.4s ease-in-out;
 }
 
-/* Fade animation */
-.fade {
-    opacity: 0;
-}
+.fade { opacity: 0; }
 
 button {
     padding: 10px 20px;
@@ -48,19 +40,7 @@ button {
     transition: transform 0.2s ease;
 }
 
-button:hover {
-    transform: scale(1.05);
-}
-
-.generate-btn {
-    background-color: #2e7d32;
-    color: white;
-}
-
-.reset-btn {
-    background-color: #c62828;
-    color: white;
-}
+button:hover { transform: scale(1.05); }
 
 /* History panel */
 .history ul {
@@ -70,12 +50,10 @@ button:hover {
     max-height: 400px;
     overflow-y: auto;
 }
-
 .history li {
     padding: 12px 0;
     border-bottom: 1px solid #ccc;
 }
-
 .history h3 {
     margin-bottom: 10px;
     padding: 6px 12px;
@@ -90,7 +68,6 @@ button:hover {
     margin-bottom: 12px;
     text-align: left;
 }
-
 .ingredient-group {
     display: flex;
     flex-wrap: wrap;
@@ -98,7 +75,7 @@ button:hover {
     margin-top: 6px;
 }
 
-/* Default ingredient chip */
+/* Ingredient chip states */
 .ingredient {
     cursor: pointer;
     padding: 6px 10px;
@@ -106,87 +83,145 @@ button:hover {
     border: 1px solid #2e7d32;
     background: #f5f5f5;
     font-size: 13px;
-    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    position: relative;
 }
-
-/* Manually selected (green) */
+.ingredient:hover { box-shadow: 0 0 0 2px #2e7d32; }
 .selected {
     background: #2e7d32;
     color: white;
     border-color: #2e7d32;
 }
-
-/* Organ-highlighted (teal outline, not selected) */
 .organ-match {
     border: 2px solid #00897b;
     background: #e0f2f1;
     color: #004d40;
     font-weight: bold;
 }
-
-/* =============================
-   HEALTH GOALS DRAWER
-   ============================= */
-
-/* Drawer toggle button row */
-.goals-toggle-row {
-    max-width: 600px;
-    margin: 0 auto 12px auto;
-    text-align: left;
+/* Dimmed state when 3 slots full and chip is not selected */
+.ingredient.locked {
+    opacity: 0.38;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
-.goals-toggle-btn {
-    background: #1b5e20;
-    position: relative;
-    left: -5px;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: bold;
+/* ── SLOT COUNTER ── */
+.slot-counter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.slot-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px dashed #bbb;
+    background: transparent;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.slot-dot.filled {
+    background: #2e7d32;
+    border-color: #2e7d32;
+}
+
+/* ── HOVER PREVIEW PANEL ── */
+#hoverPreview {
+    display: none;
+    text-align: left;
+    background: #e8f5e9;
+    border-left: 3px solid #2e7d32;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #1b5e20;
+    min-height: 40px;
+    transition: opacity 0.15s ease;
+}
+#hoverPreview strong { color: #1b5e20; }
+#hoverPreview .preview-row { margin: 2px 0; }
+
+/* ── WEEK NAV ── */
+.week-nav-btn {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 6px 12px;
+    font-size: 20px;
+    font-weight: 900;
+    border-radius: 6px;
     cursor: pointer;
-    width: 100%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.week-nav-btn:hover {
+    background: #2e7d32;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* ── ACTIVE ORGAN BADGE (on card header) ── */
+.organ-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    background: #e0f2f1;
+    color: #004d40;
+    border: 1px solid #80cbc4;
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-top: 4px;
+    font-weight: bold;
+}
+.organ-badge .clear-x {
+    cursor: pointer;
+    color: #00897b;
+    font-size: 12px;
+    line-height: 1;
+}
+.organ-badge .clear-x:hover { color: #c62828; }
+
+/* ── HEALTH GOALS DRAWER (inside card, footer) ── */
+.goals-footer-toggle {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    user-select: none;
 }
-
-.goals-toggle-btn:hover {
-    background: #2e7d32;
-    transform: none;
+.goals-footer-toggle:hover .goals-footer-label { color: #2e7d32; }
+.goals-footer-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    transition: color 0.2s ease;
 }
-
-.goals-arrow {
-    font-size: 12px;
+.goals-footer-arrow {
+    font-size: 11px;
+    color: #888;
     transition: transform 0.3s ease;
 }
+.goals-footer-arrow.open { transform: rotate(180deg); }
 
-.goals-arrow.open {
-    transform: rotate(180deg);
-}
-
-/* Drawer body (collapsible) */
-.goals-drawer {
-    max-width: 600px;
-    margin: 0 auto 20px auto;
-    background: white;
-    color: black;
-    border-radius: 0 0 12px 12px;
+.goals-inner {
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 15px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    transition: max-height 0.4s ease;
+}
+.goals-inner.open { max-height: 600px; }
+
+.goals-body {
+    padding-top: 12px;
 }
 
-.goals-drawer.open {
-    max-height: 500px;
-    padding: 15px;
-}
-
-/* Instruction text inside drawer */
 .goals-instruction {
     font-size: 12px;
     color: #555;
@@ -194,18 +229,16 @@ button:hover {
     padding: 8px 10px;
     background: #f9f9f9;
     border-left: 3px solid #2e7d32;
-    border-radius: 4px;
+    border-radius: 0;
     text-align: left;
 }
 
-/* Organ button grid */
 .organ-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
 }
-
 .organ-btn {
     padding: 8px 14px;
     border-radius: 20px;
@@ -217,19 +250,9 @@ button:hover {
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
+.organ-btn:hover { background: #b2dfdb; transform: scale(1.04); }
+.organ-btn.active { background: #00897b; color: white; border-color: #00897b; }
 
-.organ-btn:hover {
-    background: #b2dfdb;
-    transform: scale(1.04);
-}
-
-.organ-btn.active {
-    background: #00897b;
-    color: white;
-    border-color: #00897b;
-}
-
-/* Clear organ button */
 .clear-organ-btn {
     margin-top: 10px;
     background: #757575;
@@ -240,15 +263,9 @@ button:hover {
     font-size: 12px;
     cursor: pointer;
 }
+.clear-organ-btn:hover { background: #616161; transform: scale(1.03); }
 
-.clear-organ-btn:hover {
-    background: #616161;
-    transform: scale(1.03);
-}
-
-/* =============================
-   ALL 4 WEEKS TOGGLE BUTTON
-   ============================= */
+/* Scope toggle */
 .scope-toggle-row {
     display: flex;
     align-items: center;
@@ -258,15 +275,8 @@ button:hover {
     padding-top: 12px;
     border-top: 1px solid #e0e0e0;
 }
-
-.scope-label {
-    font-size: 12px;
-    color: #555;
-    font-weight: bold;
-}
-
+.scope-label { font-size: 12px; color: #555; font-weight: bold; }
 .scope-toggle-btn {
-    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -278,22 +288,11 @@ button:hover {
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
     margin: 0;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
-
-.scope-toggle-btn:hover {
-    background: #ffe0b2;
-    transform: scale(1.04);
-}
-
-.scope-toggle-btn.active {
-    background: #e65100;
-    color: white;
-    border-color: #e65100;
-}
-
-/* Pill indicator inside the button */
+.scope-toggle-btn:hover { background: #ffe0b2; transform: scale(1.04); }
+.scope-toggle-btn.active { background: #e65100; color: white; border-color: #e65100; }
 .scope-pill {
     font-size: 10px;
     padding: 2px 7px;
@@ -302,7 +301,7 @@ button:hover {
     font-weight: normal;
 }
 
-/* Shake card scope badge shown when all-weeks mode is on */
+/* Scope badge on card title */
 .scope-badge {
     display: inline-block;
     font-size: 11px;
@@ -314,7 +313,7 @@ button:hover {
     vertical-align: middle;
 }
 
-/* Source label inside nutrient panel */
+/* Nutrient panel source labels */
 .source-label {
     display: inline-block;
     font-size: 11px;
@@ -325,211 +324,244 @@ button:hover {
     padding: 2px 6px;
     margin: 2px;
 }
-
 .source-label.organ-source {
     background: #e0f2f1;
     color: #004d40;
     border-color: #80cbc4;
 }
-
-/* Week navigation buttons */
-.week-nav-btn {
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    color: #333;
-    padding: 6px 12px;
-    font-size: 20px;
-    font-weight: 900;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.week-nav-btn:hover {
-    background: #2e7d32;
-    color: white;
-    transform: scale(1.05);
-}
-
 </style>
 </head>
 <body>
 
 <h1>The Green Cycle</h1>
 
-<!-- =============================
-     HEALTH GOALS DRAWER
-     ============================= -->
-<div class="goals-toggle-row">
-    <button class="goals-toggle-btn" onclick="toggleGoalsDrawer()">
-        🎯 Health Goals — Optimize by organ system
-        <span class="goals-arrow" id="goalsArrow">▼</span>
-    </button>
-</div>
-
-<div class="goals-drawer" id="goalsDrawer">
-    <p class="goals-instruction">
-        <strong>How to use:</strong> Select an organ system below to highlight which ingredients
-        support it. By default, only <strong>this week's</strong> ingredients are shown —
-        toggle <em>All 4 Weeks</em> to search the full rotation pool.
-        This does <em>not</em> affect your history or rotation schedule.
-    </p>
-    <div class="organ-grid" id="organGrid">
-        <!-- Buttons injected by JS -->
-    </div>
-
-    <!-- Scope toggle: this week vs all 4 weeks -->
-    <div class="scope-toggle-row">
-        <span class="scope-label">Search scope:</span>
-        <button class="scope-toggle-btn" id="scopeToggleBtn" onclick="toggleScope()">
-            🔍 All 4 Weeks
-            <span class="scope-pill" id="scopePill">OFF</span>
-        </button>
-    </div>
-
-    <div style="text-align:center; margin-top:8px;">
-        <button class="clear-organ-btn" onclick="clearOrganFilter()">✕ Clear Health Goal</button>
-    </div>
-</div>
-
-<!-- =============================
-     MAIN SHAKE CARD
-     ============================= -->
+<!-- MAIN SHAKE CARD -->
 <div class="card" id="shakeCard">
+
+    <!-- Header row -->
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
         <button class="week-nav-btn" onclick="previousWeek()">«</button>
-        <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
+        <div>
+            <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
+            <!-- Active organ badge (hidden by default) -->
+            <div id="organBadge" style="display:none; justify-content:center; margin-top:4px;">
+                <span class="organ-badge">
+                    <span id="organBadgeLabel"></span>
+                    <span class="clear-x" onclick="clearOrganFilter()">✕</span>
+                </span>
+            </div>
+        </div>
         <button class="week-nav-btn" onclick="nextWeek()">»</button>
     </div>
-    <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin-top:0;">
-        Click up to 3 ingredients to analyze nutrient synergy
-    </p>
+
+    <!-- Subtitle + slot counter row -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; margin-bottom:4px; padding: 0 4px;">
+        <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin:0; text-align:left;">
+            Select up to 3 ingredients to analyze nutrient synergy
+        </p>
+        <div class="slot-counter" id="slotCounter">
+            <span class="slot-dot" id="dot0"></span>
+            <span class="slot-dot" id="dot1"></span>
+            <span class="slot-dot" id="dot2"></span>
+            <span style="font-size:11px; color:#aaa; margin-left:2px;" id="slotLabel">0 of 3</span>
+        </div>
+    </div>
+
+    <!-- Ingredients -->
     <div id="ingredients"></div>
+
+    <!-- Hover preview panel -->
+    <div id="hoverPreview"></div>
+
+    <!-- ── HEALTH GOALS DRAWER (footer of card) ── -->
+    <div class="goals-footer-toggle" onclick="toggleGoalsDrawer()">
+        <span class="goals-footer-label">🎯 Optimize by organ system</span>
+        <span class="goals-arrow" id="goalsArrow">▼</span>
+    </div>
+
+    <div class="goals-inner" id="goalsInner">
+        <div class="goals-body">
+            <p class="goals-instruction">
+                <strong>How to use:</strong> Select an organ system to highlight which ingredients
+                support it. Toggle <em>All 4 Weeks</em> to search the full rotation pool.
+                Your filter persists as you navigate weeks.
+            </p>
+            <div class="organ-grid" id="organGrid"></div>
+            <div class="scope-toggle-row">
+                <span class="scope-label">Search scope:</span>
+                <button class="scope-toggle-btn" id="scopeToggleBtn" onclick="toggleScope()">
+                    🔍 All 4 Weeks
+                    <span class="scope-pill" id="scopePill">OFF</span>
+                </button>
+            </div>
+            <div style="text-align:center; margin-top:8px;">
+                <button class="clear-organ-btn" onclick="clearOrganFilter()">✕ Clear Health Goal</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- ===========================
-     Nutrient Intelligence Panel
-     =========================== -->
+<!-- Nutrient Intelligence Panel -->
 <div class="card" id="nutrientPanel" style="display:none;">
     <h2>Nutrient Intelligence</h2>
     <div id="nutrientContent"></div>
     <button onclick="clearSelection()">Clear Selection</button>
 </div>
 
-<!-- ===========================
-     History
-     =========================== -->
+<!-- History -->
 <div class="history">
     <h3 id="historyToggle" onclick="toggleHistory()">History</h3>
-    <ul id="historyList" style="display: none;"></ul>
+    <ul id="historyList" style="display:none;"></ul>
 </div>
 
 <script>
 /* ====================================================
-   MASTER FOOD POOLS (4-week structured rotation)
+   MASTER FOOD POOLS
    ==================================================== */
-
-const leafyGreens = ["Spinach", "Kale", "Swiss Chard", "Arugula"];
-const cruciferous  = ["Broccoli", "Red Cabbage", "Brussels Sprouts", "Cauliflower"];
-const supplementalVeg = ["Beets", "Carrots", "Cellery", "Zucchini", "Cucumber"];
-
-const fruits = [
-    "Blueberries", "Apple", "Blackberries", "Pomegranate",
-    "Rasberries", "Grapefruit", "Orange", "Kiwi"
-];
-
-const roots = [
-    "Turmeric Root + black pepper", "Garlic", "Ginger Root", "Burdock Root"
-];
-
-const seeds = ["Brown Flaxseed", "Pumpkin Seeds", "Brazil Nuts"];
+const leafyGreens     = ["Spinach", "Kale", "Swiss Chard", "Arugula"];
+const cruciferous     = ["Broccoli", "Red Cabbage", "Brussels Sprouts", "Cauliflower"];
+const supplementalVeg = ["Beets", "Carrots", "Celery", "Zucchini", "Cucumber"];
+const fruits = ["Blueberries", "Apple", "Blackberries", "Pomegranate", "Rasberries", "Grapefruit", "Orange", "Kiwi"];
+const roots  = ["Turmeric Root + black pepper", "Garlic", "Ginger Root", "Burdock Root"];
+const seeds  = ["Brown Flaxseed", "Pumpkin Seeds", "Brazil Nuts"];
 
 /* ====================================================
-   FULL NUTRIENT DATABASE
+   NUTRIENT DATABASE
    ==================================================== */
-
 const nutrientDB = {
-
-    "Spinach":          { organs: ["Brain", "Liver", "Heart"],           nutrients: { iron: "high", folate: "high", magnesium: "moderate", vitamin_k: "high", lutein: "moderate" } },
-    "Kale":             { organs: ["Heart", "Liver", "Cellular"],        nutrients: { vitamin_k: "very high", vitamin_c: "high", beta_carotene: "high", fiber: "moderate" } },
-    "Swiss Chard":      { organs: ["Heart", "Brain", "Blood"],           nutrients: { magnesium: "high", potassium: "moderate", vitamin_k: "high", iron: "moderate" } },
-    "Arugula":          { organs: ["Cardiovascular", "Liver"],           nutrients: { nitrates: "high", vitamin_k: "moderate", folate: "moderate" } },
-    "Broccoli":         { organs: ["Liver", "Brain", "Cellular"],        nutrients: { sulforaphane: "high", vitamin_c: "high", fiber: "moderate" } },
-    "Red Cabbage":      { organs: ["Brain", "Cardiovascular"],           nutrients: { anthocyanins: "high", vitamin_c: "moderate", fiber: "moderate" } },
-    "Brussels Sprouts": { organs: ["Liver", "Gut"],                      nutrients: { sulforaphane: "moderate", fiber: "high", vitamin_k: "high" } },
-    "Cauliflower":      { organs: ["Liver", "Gut"],                      nutrients: { sulforaphane: "moderate", fiber: "moderate", vitamin_c: "moderate" } },
-    "Beets":            { organs: ["Cardiovascular", "Brain"],           nutrients: { nitrates: "high", betalains: "high", folate: "moderate" } },
-    "Carrots":          { organs: ["Eyes", "Immune"],                    nutrients: { beta_carotene: "very high", fiber: "moderate" } },
-    "Celery":           { organs: ["Heart", "Gut", "Joints"],            nutrients: { vitamin_k: "high", potassium: "moderate", fiber: "moderate", phthalides: "high", antioxidants: "moderate" } },    
-    "Zucchini":         { organs: ["Gut", "Heart"],                      nutrients: { vitamin_c: "moderate", potassium: "moderate", fiber: "low" } },
-    "Cucumber":         { organs: ["Hydration", "Skin"],                 nutrients: { vitamin_k: "low", antioxidants: "low" } },
-
-    "Blueberries":      { organs: ["Brain", "Cardiovascular"],           nutrients: { anthocyanins: "very high", vitamin_c: "moderate", fiber: "moderate" } },
-    "Apple":            { organs: ["Gut", "Heart"],                      nutrients: { quercetin: "moderate", fiber: "high", vitamin_c: "low" } },
-    "Blackberries":     { organs: ["Brain", "Gut"],                      nutrients: { anthocyanins: "high", fiber: "high", vitamin_c: "moderate" } },
-    "Pomegranate":      { organs: ["Heart", "Cellular"],                 nutrients: { punicalagins: "very high", antioxidants: "high" } },
-    "Rasberries":       { organs: ["Gut", "Brain"],                      nutrients: { fiber: "very high", vitamin_c: "moderate", ellagic_acid: "moderate" } },
-    "Grapefruit":       { organs: ["Liver", "Cardiovascular"],           nutrients: { vitamin_c: "high", naringin: "high", fiber: "moderate" } },
-    "Orange":           { organs: ["Immune", "Cardiovascular"],          nutrients: { vitamin_c: "high", hesperidin: "moderate", fiber: "moderate" } },
-    "Kiwi":             { organs: ["Immune", "Gut"],                     nutrients: { vitamin_c: "very high", fiber: "moderate", vitamin_k: "moderate" } },
-
-    "Turmeric Root + black pepper": { organs: ["Brain", "Liver", "Joints"], nutrients: { curcumin: "high", antioxidants: "high" } },
-    "Garlic":           { organs: ["Heart", "Immune"],                   nutrients: { allicin: "high", sulfur_compounds: "high" } },
-    "Ginger Root":      { organs: ["Gut", "Brain"],                      nutrients: { gingerols: "high", antioxidants: "moderate" } },
-    "Burdock Root":     { organs: ["Liver", "Gut"],                      nutrients: { inulin: "high", antioxidants: "moderate", fiber: "moderate" } },
-
-    "Brown Flaxseed":   { organs: ["Heart", "Gut", "Brain"],             nutrients: { omega_3: "high", lignans: "high", fiber: "high" } },
-    "Pumpkin Seeds":    { organs: ["Prostate", "Brain", "Immune"],       nutrients: { magnesium: "high", zinc: "moderate", iron: "moderate" } },
-    "Brazil Nuts":      { organs: ["Brain", "Heart", "Immune", "Cellular"], nutrients: { selenium: "very high", vitamin_e: "high", antioxidants: "high", magnesium: "moderate" } }
+    "Spinach":          { organs: ["Brain","Liver","Heart"],              nutrients: { iron:"high", folate:"high", magnesium:"moderate", vitamin_k:"high", lutein:"moderate" } },
+    "Kale":             { organs: ["Heart","Liver","Cellular"],           nutrients: { vitamin_k:"very high", vitamin_c:"high", beta_carotene:"high", fiber:"moderate" } },
+    "Swiss Chard":      { organs: ["Heart","Brain","Blood"],              nutrients: { magnesium:"high", potassium:"moderate", vitamin_k:"high", iron:"moderate" } },
+    "Arugula":          { organs: ["Cardiovascular","Liver"],             nutrients: { nitrates:"high", vitamin_k:"moderate", folate:"moderate" } },
+    "Broccoli":         { organs: ["Liver","Brain","Cellular"],           nutrients: { sulforaphane:"high", vitamin_c:"high", fiber:"moderate" } },
+    "Red Cabbage":      { organs: ["Brain","Cardiovascular"],             nutrients: { anthocyanins:"high", vitamin_c:"moderate", fiber:"moderate" } },
+    "Brussels Sprouts": { organs: ["Liver","Gut"],                        nutrients: { sulforaphane:"moderate", fiber:"high", vitamin_k:"high" } },
+    "Cauliflower":      { organs: ["Liver","Gut"],                        nutrients: { sulforaphane:"moderate", fiber:"moderate", vitamin_c:"moderate" } },
+    "Beets":            { organs: ["Cardiovascular","Brain"],             nutrients: { nitrates:"high", betalains:"high", folate:"moderate" } },
+    "Carrots":          { organs: ["Eyes","Immune"],                      nutrients: { beta_carotene:"very high", fiber:"moderate" } },
+    "Celery":           { organs: ["Heart","Gut","Joints"],               nutrients: { vitamin_k:"high", potassium:"moderate", fiber:"moderate", phthalides:"high", antioxidants:"moderate" } },
+    "Zucchini":         { organs: ["Gut","Heart"],                        nutrients: { vitamin_c:"moderate", potassium:"moderate", fiber:"low" } },
+    "Cucumber":         { organs: ["Hydration","Skin"],                   nutrients: { vitamin_k:"low", antioxidants:"low" } },
+    "Blueberries":      { organs: ["Brain","Cardiovascular"],             nutrients: { anthocyanins:"very high", vitamin_c:"moderate", fiber:"moderate" } },
+    "Apple":            { organs: ["Gut","Heart"],                        nutrients: { quercetin:"moderate", fiber:"high", vitamin_c:"low" } },
+    "Blackberries":     { organs: ["Brain","Gut"],                        nutrients: { anthocyanins:"high", fiber:"high", vitamin_c:"moderate" } },
+    "Pomegranate":      { organs: ["Heart","Cellular"],                   nutrients: { punicalagins:"very high", antioxidants:"high" } },
+    "Rasberries":       { organs: ["Gut","Brain"],                        nutrients: { fiber:"very high", vitamin_c:"moderate", ellagic_acid:"moderate" } },
+    "Grapefruit":       { organs: ["Liver","Cardiovascular"],             nutrients: { vitamin_c:"high", naringin:"high", fiber:"moderate" } },
+    "Orange":           { organs: ["Immune","Cardiovascular"],            nutrients: { vitamin_c:"high", hesperidin:"moderate", fiber:"moderate" } },
+    "Kiwi":             { organs: ["Immune","Gut"],                       nutrients: { vitamin_c:"very high", fiber:"moderate", vitamin_k:"moderate" } },
+    "Turmeric Root + black pepper": { organs: ["Brain","Liver","Joints"], nutrients: { curcumin:"high", antioxidants:"high" } },
+    "Garlic":           { organs: ["Heart","Immune"],                     nutrients: { allicin:"high", sulfur_compounds:"high" } },
+    "Ginger Root":      { organs: ["Gut","Brain"],                        nutrients: { gingerols:"high", antioxidants:"moderate" } },
+    "Burdock Root":     { organs: ["Liver","Gut"],                        nutrients: { inulin:"high", antioxidants:"moderate", fiber:"moderate" } },
+    "Brown Flaxseed":   { organs: ["Heart","Gut","Brain"],                nutrients: { omega_3:"high", lignans:"high", fiber:"high" } },
+    "Pumpkin Seeds":    { organs: ["Prostate","Brain","Immune"],          nutrients: { magnesium:"high", zinc:"moderate", iron:"moderate" } },
+    "Brazil Nuts":      { organs: ["Brain","Heart","Immune","Cellular"],  nutrients: { selenium:"very high", vitamin_e:"high", antioxidants:"high", magnesium:"moderate" } }
 };
 
 /* ====================================================
-   ORGAN SYSTEM DEFINITIONS
-   Maps each Health Goal button → which organ tags to match
+   ORGAN SYSTEMS
    ==================================================== */
-
 const organSystems = [
-    { label: "🧠 Brain",    organs: ["Brain"],                    desc: "Controls thought, memory, and mood. Benefits from anti-inflammatory compounds and antioxidants that protect neurons." },
-    { label: "🫀 Heart",    organs: ["Heart", "Cardiovascular"],  desc: "Pumps blood to every cell. Supported by nutrients that reduce inflammation, lower blood pressure, and improve circulation." },
-    { label: "🫁 Liver",    organs: ["Liver"],                    desc: "Filters toxins, produces bile, and regulates metabolism. Thrives on compounds that support detoxification pathways." },
-    { label: "🦠 Immune",   organs: ["Immune"],                   desc: "Defends against infection and disease. Strengthened by vitamins, minerals, and antioxidants that activate immune cells." },
-    { label: "🫶 Gut",      organs: ["Gut"],                      desc: "Digests food and houses most of the immune system. Fiber and prebiotics feed beneficial bacteria and maintain gut lining." },
-    { label: "👁 Eyes",     organs: ["Eyes"],                      desc: "Processes light and vision. Protected by carotenoids and antioxidants that filter UV damage and slow macular degeneration." },
-    { label: "🩸 Blood",    organs: ["Blood"],                    desc: "Carries oxygen, nutrients, and immune cells. Requires iron, folate, and vitamin K for healthy production and clotting." },
-    { label: "💪 Joints",   organs: ["Joints"],                   desc: "Connect bones and enable movement. Anti-inflammatory compounds reduce stiffness and protect cartilage from breakdown." },
-    { label: "🧬 Cellular", organs: ["Cellular"],                 desc: "The foundation of all body function. Antioxidants neutralize free radicals to protect DNA and support healthy cell turnover." },
-    { label: "💧 Skin",     organs: ["Skin", "Hydration"],        desc: "The body's largest organ and first defense barrier. Vitamin C, antioxidants, and hydration maintain elasticity and repair." }
+    { label: "🧠 Brain",    organs: ["Brain"],                   desc: "Controls thought, memory, and mood. Benefits from anti-inflammatory compounds and antioxidants that protect neurons." },
+    { label: "🫀 Heart",    organs: ["Heart","Cardiovascular"],  desc: "Pumps blood to every cell. Supported by nutrients that reduce inflammation, lower blood pressure, and improve circulation." },
+    { label: "🫁 Liver",    organs: ["Liver"],                   desc: "Filters toxins, produces bile, and regulates metabolism. Thrives on compounds that support detoxification pathways." },
+    { label: "🦠 Immune",   organs: ["Immune"],                  desc: "Defends against infection and disease. Strengthened by vitamins, minerals, and antioxidants that activate immune cells." },
+    { label: "🫶 Gut",      organs: ["Gut"],                     desc: "Digests food and houses most of the immune system. Fiber and prebiotics feed beneficial bacteria and maintain gut lining." },
+    { label: "👁 Eyes",     organs: ["Eyes"],                    desc: "Processes light and vision. Protected by carotenoids and antioxidants that filter UV damage and slow macular degeneration." },
+    { label: "🩸 Blood",    organs: ["Blood"],                   desc: "Carries oxygen, nutrients, and immune cells. Requires iron, folate, and vitamin K for healthy production and clotting." },
+    { label: "💪 Joints",   organs: ["Joints"],                  desc: "Connect bones and enable movement. Anti-inflammatory compounds reduce stiffness and protect cartilage from breakdown." },
+    { label: "🧬 Cellular", organs: ["Cellular"],                desc: "The foundation of all body function. Antioxidants neutralize free radicals to protect DNA and support healthy cell turnover." },
+    { label: "💧 Skin",     organs: ["Skin","Hydration"],        desc: "The body's largest organ and first defense barrier. Vitamin C, antioxidants, and hydration maintain elasticity and repair." }
 ];
-
-/* ====================================================
-   FULL 4-WEEK INGREDIENT POOL (all possible ingredients)
-   Used when allWeeksMode is ON
-   ==================================================== */
 
 const allIngredientPool = {
     vegetables: [...new Set([...leafyGreens, ...cruciferous, ...supplementalVeg])],
-    fruits:     fruits,
-    roots:      roots,
-    seeds:      seeds
+    fruits, roots, seeds
 };
 
 /* ====================================================
    STATE
    ==================================================== */
+let selectedItems        = [];
+let activeOrgan          = null;   // persists across week navigation now
+let allWeeksMode         = false;
+let savedCurrentWeekData = null;
 
-let selectedItems   = [];    // manually clicked ingredients
-let activeOrgan     = null;  // currently selected organ system label
-let allWeeksMode    = false; // true = show full 4-week pool in shake card
+/* ====================================================
+   LOAD SAVED DATA
+   ==================================================== */
+let currentWeek = localStorage.getItem("currentWeek")
+    ? parseInt(localStorage.getItem("currentWeek")) : 0;
+
+let history = localStorage.getItem("shakeHistory")
+    ? JSON.parse(localStorage.getItem("shakeHistory")) : [];
+
+/* ====================================================
+   SLOT COUNTER
+   ==================================================== */
+function updateSlotCounter() {
+    const n = selectedItems.length;
+    for (let i = 0; i < 3; i++) {
+        const dot = document.getElementById("dot" + i);
+        dot.classList.toggle("filled", i < n);
+    }
+    document.getElementById("slotLabel").textContent = n + " of 3";
+
+    // Lock unselected chips when full
+    document.querySelectorAll(".ingredient").forEach(el => {
+        if (n >= 3 && !el.classList.contains("selected")) {
+            el.classList.add("locked");
+        } else {
+            el.classList.remove("locked");
+        }
+    });
+}
+
+/* ====================================================
+   HOVER PREVIEW
+   ==================================================== */
+function showHoverPreview(itemName) {
+    if (activeOrgan) return;  // don't show during organ mode
+    const data = nutrientDB[itemName];
+    if (!data) return;
+    const preview = document.getElementById("hoverPreview");
+    const organs = data.organs.join(", ");
+    const nutrients = Object.entries(data.nutrients)
+        .map(([k, v]) => k.replace(/_/g, " ") + " (" + v + ")")
+        .join(", ");
+    preview.style.display = "block";
+    preview.innerHTML =
+        "<strong>" + itemName + "</strong>" +
+        "<div class='preview-row' style='margin-top:4px;'>Targets: " + organs + "</div>" +
+        "<div class='preview-row'>Key nutrients: " + nutrients + "</div>";
+}
+
+function hideHoverPreview() {
+    const preview = document.getElementById("hoverPreview");
+    preview.style.display = "none";
+    preview.innerHTML = "";
+}
+
+/* ====================================================
+   ORGAN BADGE (on card header)
+   ==================================================== */
+function updateOrganBadge() {
+    const badge = document.getElementById("organBadge");
+    const label = document.getElementById("organBadgeLabel");
+    if (activeOrgan) {
+        badge.style.display = "flex";
+        label.textContent = activeOrgan;
+    } else {
+        badge.style.display = "none";
+        label.textContent = "";
+    }
+}
 
 /* ====================================================
    HEALTH GOALS DRAWER
    ==================================================== */
-
 function buildOrganButtons() {
     const grid = document.getElementById("organGrid");
     grid.innerHTML = "";
@@ -544,26 +576,23 @@ function buildOrganButtons() {
 }
 
 function toggleGoalsDrawer() {
-    const drawer = document.getElementById("goalsDrawer");
+    const inner = document.getElementById("goalsInner");
     const arrow  = document.getElementById("goalsArrow");
-    drawer.classList.toggle("open");
+    inner.classList.toggle("open");
     arrow.classList.toggle("open");
 }
 
 /* ====================================================
-   SCOPE TOGGLE (this week ↔ all 4 weeks)
+   SCOPE TOGGLE
    ==================================================== */
-
 function toggleScope() {
     allWeeksMode = !allWeeksMode;
-
     const btn  = document.getElementById("scopeToggleBtn");
     const pill = document.getElementById("scopePill");
 
     if (allWeeksMode) {
         btn.classList.add("active");
         pill.textContent = "ON";
-        // If organ already active, optimized mode kicks in via showOrganNutrientPanel
         if (activeOrgan) {
             const sys = organSystems.find(s => s.label === activeOrgan);
             if (sys) showOrganNutrientPanel(sys);
@@ -573,9 +602,7 @@ function toggleScope() {
     } else {
         btn.classList.remove("active");
         pill.textContent = "OFF";
-        // Restore current week card
         restoreCurrentWeekCard();
-        // If organ still active, re-run in current-week scope
         if (activeOrgan) {
             const sys = organSystems.find(s => s.label === activeOrgan);
             if (sys) {
@@ -590,34 +617,17 @@ function toggleScope() {
     }
 }
 
-/* Render the shake card with all 4-week ingredients */
 function renderAllWeeksCard() {
     clearManualSelections();
-
     document.getElementById("weekTitle").innerHTML =
         'Full Rotation Pool <span class="scope-badge">All 4 Weeks</span>';
-
-    function renderCategory(label, items) {
-        return `
-            <div class="category">
-                <strong>${label}:</strong>
-                <div class="ingredient-group">
-                    ${items.map(item =>
-                        `<span class="ingredient" data-item="${item}" onclick="toggleSelect(this, '${item.replace(/'/g, "\\'")}')">${item}</span>`
-                    ).join("")}
-                </div>
-            </div>`;
-    }
-
     document.getElementById("ingredients").innerHTML =
         renderCategory("Vegetables", allIngredientPool.vegetables) +
         renderCategory("Fruits",     allIngredientPool.fruits) +
         renderCategory("Roots",      allIngredientPool.roots) +
         renderCategory("Seeds",      allIngredientPool.seeds);
+    attachChipEvents();
 }
-
-/* Restore the last-rendered current week data */
-let savedCurrentWeekData = null; // populated on each generateWeek / displayWeek call
 
 function restoreCurrentWeekCard() {
     clearManualSelections();
@@ -629,291 +639,197 @@ function restoreCurrentWeekCard() {
     }
 }
 
-const DEFAULT_SUBTITLE = "Click up to 3 ingredients to analyze nutrient synergy";
+const DEFAULT_SUBTITLE = "Select up to 3 ingredients to analyze nutrient synergy";
 
 function setCardSubtitle(text, isDefinition = false) {
     const el = document.getElementById("cardSubtitle");
     if (!el) return;
     el.textContent = text;
-    el.style.opacity     = isDefinition ? "1"     : "0.6";
-    el.style.fontStyle   = isDefinition ? "italic": "normal";
-    el.style.color       = isDefinition ? "#2e5a1c" : "";
+    el.style.opacity   = isDefinition ? "1"      : "0.6";
+    el.style.fontStyle = isDefinition ? "italic" : "normal";
+    el.style.color     = isDefinition ? "#2e5a1c" : "";
 }
 
+/* ====================================================
+   ORGAN SELECTION — now persists across navigation
+   ==================================================== */
 function selectOrgan(sys) {
-    // Toggle off if already active
-    if (activeOrgan === sys.label) {
-        clearOrganFilter();
-        return;
-    }
-
-    // Clear manual selections first so two modes don't conflict
+    if (activeOrgan === sys.label) { clearOrganFilter(); return; }
     clearManualSelections();
-
     activeOrgan = sys.label;
-
-    // Swap subtitle to organ definition
     setCardSubtitle(sys.desc, true);
-
-    // Update button active state
-    document.querySelectorAll(".organ-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.getAttribute("data-label") === sys.label);
-    });
-
-    // showOrganNutrientPanel handles card re-render in optimized mode
-    // and highlights — call it first; highlights applied inside via setTimeout
+    document.querySelectorAll(".organ-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.getAttribute("data-label") === sys.label));
+    updateOrganBadge();
     showOrganNutrientPanel(sys);
-
-    // In non-optimized mode, highlight chips directly
-    if (!allWeeksMode) {
-        highlightOrganMatches(sys.organs);
-    }
+    if (!allWeeksMode) highlightOrganMatches(sys.organs);
 }
 
 function clearOrganFilter() {
     activeOrgan = null;
-
-    // Restore default subtitle
     setCardSubtitle(DEFAULT_SUBTITLE, false);
-
-    // Reset all organ-btn active states
     document.querySelectorAll(".organ-btn").forEach(btn => btn.classList.remove("active"));
-
-    // Remove teal highlights from ingredient chips
     document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("organ-match"));
-
-    // If all-weeks mode is still on, restore the full pool card
-    if (allWeeksMode) {
-        renderAllWeeksCard();
-    }
-
-    // Hide nutrient panel if nothing manually selected either
-    if (selectedItems.length === 0) {
+    updateOrganBadge();
+    if (allWeeksMode) renderAllWeeksCard();
+    if (selectedItems.length === 0)
         document.getElementById("nutrientPanel").style.display = "none";
-    }
 }
 
-/* Highlight chips that support the selected organ */
 function highlightOrganMatches(targetOrgans) {
     document.querySelectorAll(".ingredient").forEach(el => {
-        const itemName = el.getAttribute("data-item");
-        const data = nutrientDB[itemName];
+        const data = nutrientDB[el.getAttribute("data-item")];
         if (!data) { el.classList.remove("organ-match"); return; }
-
-        const matches = data.organs.some(o => targetOrgans.includes(o));
-        el.classList.toggle("organ-match", matches);
+        el.classList.toggle("organ-match", data.organs.some(o => targetOrgans.includes(o)));
     });
 }
 
 /* ====================================================
    SCORING ENGINE
-   Ranks a list of ingredient names for a given organ system.
-   Primary:   count of matching organs in the item's organ list
-   Tiebreak:  sum of nutrient level points across all nutrients
-              (very high=4, high=3, moderate=2, low=1)
    ==================================================== */
-
-const NUTRIENT_LEVELS = { "low": 1, "moderate": 2, "high": 3, "very high": 4 };
+const NUTRIENT_LEVELS = { "low":1, "moderate":2, "high":3, "very high":4 };
 
 function scoreIngredient(itemName, targetOrgans) {
     const data = nutrientDB[itemName];
     if (!data) return 0;
-
-    // Primary: how many of this item's organs match the target
-    const organScore = data.organs.filter(o => targetOrgans.includes(o)).length;
-
-    // Tiebreaker: sum of all nutrient level points
+    const organScore   = data.organs.filter(o => targetOrgans.includes(o)).length;
     const nutrientScore = Object.values(data.nutrients)
         .reduce((sum, level) => sum + (NUTRIENT_LEVELS[level] || 0), 0);
-
-    // Combine: organScore weighted heavily so it always wins tiebreak
     return (organScore * 1000) + nutrientScore;
 }
 
-/* Filter a category array to only organ-matching items, ranked by score */
 function rankCategory(items, targetOrgans, limit) {
     return items
-        .filter(item => {
-            const data = nutrientDB[item];
-            return data && data.organs.some(o => targetOrgans.includes(o));
-        })
+        .filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => targetOrgans.includes(o)); })
         .sort((a, b) => scoreIngredient(b, targetOrgans) - scoreIngredient(a, targetOrgans))
         .slice(0, limit);
 }
 
-/* Build Nutrient Intelligence panel for an organ filter */
+/* ====================================================
+   ORGAN NUTRIENT PANEL
+   ==================================================== */
 function showOrganNutrientPanel(sys) {
-
     const isOptimizedMode = allWeeksMode && activeOrgan;
-
-    let displayByCategory = null; // used only in optimized mode
+    let displayByCategory = null;
     let matchingItems = [];
 
     if (isOptimizedMode) {
-        // ── OPTIMIZED MODE: rank each category separately, apply limits ──
         const bestVeg   = rankCategory(allIngredientPool.vegetables, sys.organs, 3);
         const bestFruit = rankCategory(allIngredientPool.fruits,     sys.organs, 2);
-        const bestRoots = rankCategory(allIngredientPool.roots,       sys.organs, 2);
-        const bestSeeds = rankCategory(allIngredientPool.seeds,       sys.organs, 2);
-
+        const bestRoots = rankCategory(allIngredientPool.roots,      sys.organs, 2);
+        const bestSeeds = rankCategory(allIngredientPool.seeds,      sys.organs, 2);
         displayByCategory = { vegetables: bestVeg, fruits: bestFruit, roots: bestRoots, seeds: bestSeeds };
         matchingItems = [...bestVeg, ...bestFruit, ...bestRoots, ...bestSeeds];
-
-        // Rerender the shake card to show ONLY the optimized picks
         renderOptimizedCard(displayByCategory, sys.label);
-
     } else if (allWeeksMode) {
-        // All-weeks mode, no organ filter active — show full pool
         matchingItems = [
-            ...allIngredientPool.vegetables,
-            ...allIngredientPool.fruits,
-            ...allIngredientPool.roots,
-            ...allIngredientPool.seeds
-        ].filter(item => {
-            const data = nutrientDB[item];
-            return data && data.organs.some(o => sys.organs.includes(o));
-        });
-
+            ...allIngredientPool.vegetables, ...allIngredientPool.fruits,
+            ...allIngredientPool.roots,      ...allIngredientPool.seeds
+        ].filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => sys.organs.includes(o)); });
     } else {
-        // Current week only
         matchingItems = Array.from(document.querySelectorAll(".ingredient"))
             .map(el => el.getAttribute("data-item"))
-            .filter(item => {
-                const data = nutrientDB[item];
-                return data && data.organs.some(o => sys.organs.includes(o));
-            });
+            .filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => sys.organs.includes(o)); });
     }
 
-    // After potential card re-render, apply teal highlights
     setTimeout(() => highlightOrganMatches(sys.organs), 10);
 
     const scopeLabel = isOptimizedMode
-        ? `<strong>optimized across all 4 weeks</strong>`
-        : allWeeksMode
-            ? `<strong>all 4 weeks</strong>`
-            : `<strong>this week's shake</strong>`;
+        ? "<strong>optimized across all 4 weeks</strong>"
+        : allWeeksMode ? "<strong>all 4 weeks</strong>" : "<strong>this week's shake</strong>";
 
     if (matchingItems.length === 0) {
         document.getElementById("nutrientPanel").style.display = "block";
-        document.getElementById("nutrientContent").innerHTML = `
-            <p style="color:#888;">No ingredients in ${scopeLabel} directly target <strong>${sys.label}</strong>.</p>`;
+        document.getElementById("nutrientContent").innerHTML =
+            "<p style='color:#888;'>No ingredients in " + scopeLabel + " directly target <strong>" + sys.label + "</strong>.</p>";
         return;
     }
 
-    // Merge nutrients — keep highest level per nutrient
     let nutrientMap = {};
     matchingItems.forEach(item => {
         const data = nutrientDB[item];
         if (!data) return;
-        for (let nutrient in data.nutrients) {
-            const levels = ["low", "moderate", "high", "very high"];
-            const existing = nutrientMap[nutrient] ? levels.indexOf(nutrientMap[nutrient]) : -1;
-            const incoming = levels.indexOf(data.nutrients[nutrient]);
-            if (incoming > existing) nutrientMap[nutrient] = data.nutrients[nutrient];
+        const levels = ["low","moderate","high","very high"];
+        for (let n in data.nutrients) {
+            const existing = nutrientMap[n] ? levels.indexOf(nutrientMap[n]) : -1;
+            const incoming = levels.indexOf(data.nutrients[n]);
+            if (incoming > existing) nutrientMap[n] = data.nutrients[n];
         }
     });
 
     const nutrientList = Object.entries(nutrientMap)
-        .map(([key, val]) => `${key.replace(/_/g, " ")} <em style="color:#888;">(${val})</em>`)
+        .map(([k, v]) => k.replace(/_/g," ") + " <em style='color:#888;'>(" + v + ")</em>")
         .join("<br>");
 
-    // Build chips — in optimized mode, group by category with labels
     let sourceHTML = "";
     if (isOptimizedMode && displayByCategory) {
-        const cats = [
-            { label: "Vegetables", items: displayByCategory.vegetables },
-            { label: "Fruits",     items: displayByCategory.fruits },
-            { label: "Roots",      items: displayByCategory.roots },
-            { label: "Seeds",      items: displayByCategory.seeds }
-        ];
-        sourceHTML = cats.map(cat => {
-            if (cat.items.length === 0) return "";
-            const chips = cat.items.map(item =>
-                `<span class="source-label organ-source">${item}</span>`
-            ).join(" ");
-            return `<div style="margin-bottom:6px;"><span style="font-size:11px;font-weight:bold;color:#666;">${cat.label}:</span> ${chips}</div>`;
-        }).join("");
+        [["Vegetables", displayByCategory.vegetables], ["Fruits", displayByCategory.fruits],
+         ["Roots", displayByCategory.roots], ["Seeds", displayByCategory.seeds]].forEach(([label, items]) => {
+            if (items.length === 0) return;
+            const chips = items.map(item => "<span class='source-label organ-source'>" + item + "</span>").join(" ");
+            sourceHTML += "<div style='margin-bottom:6px;'><span style='font-size:11px;font-weight:bold;color:#666;'>" + label + ":</span> " + chips + "</div>";
+        });
     } else {
-        sourceHTML = matchingItems
-            .map(item => `<span class="source-label organ-source">${item}</span>`)
-            .join(" ");
+        sourceHTML = matchingItems.map(item => "<span class='source-label organ-source'>" + item + "</span>").join(" ");
     }
 
     const bgColor     = isOptimizedMode ? "#fce4ec" : allWeeksMode ? "#fff3e0" : "#e0f2f1";
     const borderColor = isOptimizedMode ? "#c2185b" : allWeeksMode ? "#e65100" : "#00897b";
     const modeNote    = isOptimizedMode
         ? "Top-ranked ingredients selected from the full 4-week pool — scored by organ match strength and nutrient density."
-        : allWeeksMode
-            ? "Highlighted in teal on the full rotation card above."
-            : "Highlighted in teal on the shake card above.";
+        : allWeeksMode ? "Highlighted in teal on the full rotation card above." : "Highlighted in teal on the shake card above.";
 
     document.getElementById("nutrientPanel").style.display = "block";
-    document.getElementById("nutrientContent").innerHTML = `
-        <p style="font-size:12px; color:#555; background:${bgColor}; border-left: 3px solid ${borderColor}; padding:8px 10px; border-radius:6px; text-align:left; margin-bottom:12px;">
-            ${isOptimizedMode ? "🏆 <strong>Optimized combo</strong> for " : "Showing ingredients from "}${scopeLabel} that support <strong>${sys.label}</strong>.
-            ${modeNote}
-        </p>
-        <h3 style="margin-bottom:6px;">Best Picks${isOptimizedMode ? " (ranked)" : ""}:</h3>
-        <div style="margin-bottom:12px;">${sourceHTML}</div>
-        <h3 style="margin-bottom:6px;">Combined Key Nutrients:</h3>
-        <p style="text-align:left;">${nutrientList}</p>
-    `;
+    document.getElementById("nutrientContent").innerHTML =
+        "<p style='font-size:12px;color:#555;background:" + bgColor + ";border-left:3px solid " + borderColor + ";padding:8px 10px;border-radius:6px;text-align:left;margin-bottom:12px;'>" +
+        (isOptimizedMode ? "🏆 <strong>Optimized combo</strong> for " : "Showing ingredients from ") + scopeLabel + " that support <strong>" + sys.label + "</strong>. " + modeNote +
+        "</p>" +
+        "<h3 style='margin-bottom:6px;'>Best Picks" + (isOptimizedMode ? " (ranked)" : "") + ":</h3>" +
+        "<div style='margin-bottom:12px;'>" + sourceHTML + "</div>" +
+        "<h3 style='margin-bottom:6px;'>Combined Key Nutrients:</h3>" +
+        "<p style='text-align:left;'>" + nutrientList + "</p>";
 }
 
-/* Render shake card showing ONLY the optimized ingredient picks */
 function renderOptimizedCard(byCategory, organLabel) {
-    function renderCategory(label, items) {
-        if (items.length === 0) return "";
-        return `
-            <div class="category">
-                <strong>${label}:</strong>
-                <div class="ingredient-group">
-                    ${items.map(item =>
-                        `<span class="ingredient" data-item="${item}" onclick="toggleSelect(this, '${item.replace(/'/g, "\\'")}')">${item}</span>`
-                    ).join("")}
-                </div>
-            </div>`;
-    }
-
     document.getElementById("weekTitle").innerHTML =
-        `🏆 Optimized for ${organLabel} <span class="scope-badge" style="background:#c2185b;">Best Picks</span>`;
-
+        "🏆 Optimized for " + organLabel + " <span class='scope-badge' style='background:#c2185b;'>Best Picks</span>";
     document.getElementById("ingredients").innerHTML =
         renderCategory("Vegetables", byCategory.vegetables) +
         renderCategory("Fruits",     byCategory.fruits) +
         renderCategory("Roots",      byCategory.roots) +
         renderCategory("Seeds",      byCategory.seeds);
+    attachChipEvents();
 }
 
 /* ====================================================
-   MANUAL SELECTION ENGINE (unchanged logic)
+   MANUAL SELECTION
    ==================================================== */
-
 function toggleSelect(element, itemName) {
-    // If organ filter is active, disable manual selection
     if (activeOrgan) return;
+    if (element.classList.contains("locked")) return;  // respect lock state
 
     if (selectedItems.includes(itemName)) {
         selectedItems = selectedItems.filter(i => i !== itemName);
         element.classList.remove("selected");
         updateNutrientPanel();
+        updateSlotCounter();
         return;
     }
-
     if (selectedItems.length >= 3) return;
-
     selectedItems.push(itemName);
     element.classList.add("selected");
     updateNutrientPanel();
+    updateSlotCounter();
 }
 
 function clearManualSelections() {
     selectedItems = [];
     document.querySelectorAll(".ingredient").forEach(el => {
-        el.classList.remove("selected");
-        el.classList.remove("organ-match");
+        el.classList.remove("selected", "organ-match", "locked");
     });
     document.getElementById("nutrientPanel").style.display = "none";
+    hideHoverPreview();
+    updateSlotCounter();
 }
 
 function clearSelection() {
@@ -922,149 +838,101 @@ function clearSelection() {
 }
 
 /* ====================================================
-   DYNAMIC NUTRIENT PANEL (manual mode)
+   MANUAL NUTRIENT PANEL
    ==================================================== */
-
 function updateNutrientPanel() {
     if (selectedItems.length === 0) {
         document.getElementById("nutrientPanel").style.display = "none";
         return;
     }
-
     document.getElementById("nutrientPanel").style.display = "block";
-
-    let organMap    = {};
-    let nutrientMap = {};
-
+    let organMap = {}, nutrientMap = {};
     selectedItems.forEach(item => {
         const data = nutrientDB[item];
         if (!data) return;
-
         data.organs.forEach(org => { organMap[org] = (organMap[org] || 0) + 1; });
-        for (let nutrient in data.nutrients) {
-            nutrientMap[nutrient] = data.nutrients[nutrient];
-        }
+        for (let n in data.nutrients) nutrientMap[n] = data.nutrients[n];
     });
-
-    const organList = Object.keys(organMap)
-        .sort((a, b) => organMap[b] - organMap[a])
-        .join(", ");
-
+    const organList = Object.keys(organMap).sort((a,b) => organMap[b]-organMap[a]).join(", ");
     const nutrientList = Object.entries(nutrientMap)
-        .map(([key, val]) => `${key.replace(/_/g, " ")} <em style="color:#888;">(${val})</em>`)
-        .join("<br>");
-
-    document.getElementById("nutrientContent").innerHTML = `
-        <p style="font-size:12px; color:#555; background:#e8f5e9; padding:8px 10px; border-radius:6px; text-align:left; margin-bottom:12px;">
-            Showing nutrient synergy for your <strong>${selectedItems.length} selected ingredient${selectedItems.length > 1 ? 's' : ''}</strong>.
-        </p>
-        <h3>Supports:</h3>
-        <p>${organList}</p>
-        <h3>Key Nutrients:</h3>
-        <p style="text-align:left;">${nutrientList}</p>
-    `;
+        .map(([k,v]) => k.replace(/_/g," ") + " <em style='color:#888;'>(" + v + ")</em>").join("<br>");
+    document.getElementById("nutrientContent").innerHTML =
+        "<p style='font-size:12px;color:#555;background:#e8f5e9;padding:8px 10px;border-radius:6px;text-align:left;margin-bottom:12px;'>" +
+        "Showing nutrient synergy for your <strong>" + selectedItems.length + " selected ingredient" + (selectedItems.length > 1 ? "s" : "") + "</strong>.</p>" +
+        "<h3>Supports:</h3><p>" + organList + "</p>" +
+        "<h3>Key Nutrients:</h3><p style='text-align:left;'>" + nutrientList + "</p>";
 }
 
 /* ====================================================
-   LOAD SAVED DATA
+   RENDER HELPERS
    ==================================================== */
+function renderCategory(label, items) {
+    if (!items || items.length === 0) return "";
+    return "<div class='category'><strong>" + label + ":</strong>" +
+        "<div class='ingredient-group'>" +
+        items.map(item =>
+            "<span class='ingredient' data-item='" + item.replace(/'/g, "\\'") + "'" +
+            " onclick=\"toggleSelect(this,'" + item.replace(/'/g, "\\'") + "')\"" +
+            " onmouseenter=\"showHoverPreview('" + item.replace(/'/g, "\\'") + "')\"" +
+            " onmouseleave=\"hideHoverPreview()\">" +
+            item + "</span>"
+        ).join("") +
+        "</div></div>";
+}
 
-let currentWeek = localStorage.getItem("currentWeek")
-    ? parseInt(localStorage.getItem("currentWeek")) : 0;
-
-let history = localStorage.getItem("shakeHistory")
-    ? JSON.parse(localStorage.getItem("shakeHistory")) : [];
-
-/* ====================================================
-   MAIN GENERATION FUNCTION
-   ==================================================== */
-
-function generateWeek() {
-    const card = document.getElementById("shakeCard");
-    card.classList.add("fade");
-
-    setTimeout(() => {
-        const weekIndex = currentWeek % 4;
-
-        const veg1   = leafyGreens[weekIndex];
-        const veg2   = cruciferous[weekIndex];
-        const veg3   = supplementalVeg[weekIndex];
-        const fruit1 = fruits[(weekIndex * 2) % fruits.length];
-        const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
-        const root1  = roots[(weekIndex * 2) % roots.length];
-        const root2  = roots[(weekIndex * 2 + 1) % roots.length];
-
-        const weekData = {
-            week: weekIndex + 1,
-            vegetables: [veg1, veg2, veg3],
-            fruits: [fruit1, fruit2],
-            roots: [root1, root2],
-            seeds: seeds
-        };
-
-        // Clear organ highlights/selections and reset scope when new week loads
-        clearManualSelections();
-        clearOrganFilter();
-        if (allWeeksMode) {
-            allWeeksMode = false;
-            document.getElementById("scopeToggleBtn").classList.remove("active");
-            document.getElementById("scopePill").textContent = "OFF";
-        }
-
-        displayWeek(weekData);
-        saveHistory(weekData);
-
-        currentWeek++;
-        localStorage.setItem("currentWeek", currentWeek);
-
-        card.classList.remove("fade");
-    }, 300);
+/* Re-attach hover events after dynamic card renders (optimized/all-weeks) */
+function attachChipEvents() {
+    document.querySelectorAll(".ingredient").forEach(el => {
+        const item = el.getAttribute("data-item");
+        el.onmouseenter = () => showHoverPreview(item);
+        el.onmouseleave = () => hideHoverPreview();
+    });
 }
 
 /* ====================================================
-   WEEK NAVIGATION FUNCTIONS
+   WEEK DATA & DISPLAY
    ==================================================== */
+function getWeekData(weekNumber) {
+    const wi = weekNumber % 4;
+    return {
+        week:       wi + 1,
+        vegetables: [leafyGreens[wi], cruciferous[wi], supplementalVeg[wi]],
+        fruits:     [fruits[(wi*2) % fruits.length], fruits[(wi*2+1) % fruits.length]],
+        roots:      [roots[(wi*2) % roots.length],   roots[(wi*2+1) % roots.length]],
+        seeds
+    };
+}
 
-function previousWeek() {
+function displayWeek(data) {
+    savedCurrentWeekData = data;
+    document.getElementById("weekTitle").innerText = "Week " + data.week;
+    document.getElementById("ingredients").innerHTML =
+        renderCategory("Vegetables", data.vegetables) +
+        renderCategory("Fruits",     data.fruits) +
+        renderCategory("Roots",      data.roots) +
+        renderCategory("Seeds",      data.seeds);
+    attachChipEvents();
+}
+
+/* ====================================================
+   NAVIGATION — organ filter persists
+   ==================================================== */
+function navigateWeek(newWeek) {
     const card = document.getElementById("shakeCard");
     card.classList.add("fade");
-
     setTimeout(() => {
-        // Wrap: if at week 0 (Week 1), go to week 3 (Week 4)
-        currentWeek = currentWeek === 0 ? 3 : currentWeek - 1;
-        
+        currentWeek = newWeek;
         const weekData = getWeekData(currentWeek);
 
-        // Clear organ highlights/selections and reset scope when navigating weeks
-        clearManualSelections();
-        clearOrganFilter();
-        if (allWeeksMode) {
-            allWeeksMode = false;
-            document.getElementById("scopeToggleBtn").classList.remove("active");
-            document.getElementById("scopePill").textContent = "OFF";
-        }
+        // Clear manual selections but KEEP activeOrgan
+        selectedItems = [];
+        document.querySelectorAll(".ingredient").forEach(el =>
+            el.classList.remove("selected", "organ-match", "locked"));
+        document.getElementById("nutrientPanel").style.display = "none";
+        hideHoverPreview();
+        updateSlotCounter();
 
-        displayWeek(weekData);
-        saveHistory(currentWeek); // Update history to match current week
-        localStorage.setItem("currentWeek", currentWeek);
-
-        card.classList.remove("fade");
-    }, 300);
-}
-
-function nextWeek() {
-    const card = document.getElementById("shakeCard");
-    card.classList.add("fade");
-
-    setTimeout(() => {
-        // Wrap: if at week 3 (Week 4), go to week 0 (Week 1)
-        currentWeek = currentWeek === 3 ? 0 : currentWeek + 1;
-        
-        const weekData = getWeekData(currentWeek);
-
-        // Clear organ highlights/selections and reset scope when navigating weeks
-        clearManualSelections();
-        clearOrganFilter();
+        // Reset all-weeks mode on navigation
         if (allWeeksMode) {
             allWeeksMode = false;
             document.getElementById("scopeToggleBtn").classList.remove("active");
@@ -1075,67 +943,35 @@ function nextWeek() {
         saveHistory(currentWeek);
         localStorage.setItem("currentWeek", currentWeek);
 
+        // Re-apply organ filter to new week's chips if one is active
+        if (activeOrgan) {
+            const sys = organSystems.find(s => s.label === activeOrgan);
+            if (sys) {
+                setCardSubtitle(sys.desc, true);
+                setTimeout(() => {
+                    highlightOrganMatches(sys.organs);
+                    showOrganNutrientPanel(sys);
+                }, 10);
+            }
+        }
+
         card.classList.remove("fade");
     }, 300);
 }
 
-function displayWeek(data) {
-    savedCurrentWeekData = data; // save for scope restore
-    document.getElementById("weekTitle").innerText = "Week " + data.week;
-
-    function renderCategory(label, items) {
-        return `
-            <div class="category">
-                <strong>${label}:</strong>
-                <div class="ingredient-group">
-                    ${items.map(item =>
-                        `<span class="ingredient" data-item="${item}" onclick="toggleSelect(this, '${item.replace(/'/g, "\\'")}')">${item}</span>`
-                    ).join("")}
-                </div>
-            </div>`;
-    }
-
-    document.getElementById("ingredients").innerHTML =
-        renderCategory("Vegetables", data.vegetables) +
-        renderCategory("Fruits",     data.fruits) +
-        renderCategory("Roots",      data.roots) +
-        renderCategory("Seeds",      data.seeds);
+function previousWeek() {
+    navigateWeek(currentWeek === 0 ? 3 : currentWeek - 1);
+}
+function nextWeek() {
+    navigateWeek(currentWeek === 3 ? 0 : currentWeek + 1);
 }
 
 /* ====================================================
-   SAVE & DISPLAY HISTORY
+   HISTORY
    ==================================================== */
-
-function getWeekData(weekNumber) {
-    // weekNumber is 0-3 (Week 1-4)
-    // Generates week data based on the rotation logic
-    const weekIndex = weekNumber % 4;
-    
-    const veg1   = leafyGreens[weekIndex];
-    const veg2   = cruciferous[weekIndex];
-    const veg3   = supplementalVeg[weekIndex];
-    const fruit1 = fruits[(weekIndex * 2) % fruits.length];
-    const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
-    const root1  = roots[(weekIndex * 2) % roots.length];
-    const root2  = roots[(weekIndex * 2 + 1) % roots.length];
-
-    return {
-        week: weekIndex + 1,
-        vegetables: [veg1, veg2, veg3],
-        fruits: [fruit1, fruit2],
-        roots: [root1, root2],
-        seeds: seeds
-    };
-}
-
 function saveHistory(weekNumber) {
-    // weekNumber is 0-3 (Week 1-4)
-    // Build history array to contain weeks 0 through weekNumber
     history = [];
-    for (let i = 0; i <= weekNumber; i++) {
-        const weekData = getWeekData(i);
-        history.push(weekData);
-    }
+    for (let i = 0; i <= weekNumber; i++) history.push(getWeekData(i));
     localStorage.setItem("shakeHistory", JSON.stringify(history));
     renderHistory();
 }
@@ -1143,80 +979,45 @@ function saveHistory(weekNumber) {
 function renderHistory() {
     const list = document.getElementById("historyList");
     list.innerHTML = "";
-    
-    // Show history entries from index 0 up to currentWeek (inclusive)
-    // currentWeek is 0-indexed, so currentWeek + 1 gives us the week number
-    const numWeeksToShow = currentWeek + 1;
-    
-    for (let i = 0; i < numWeeksToShow && i < history.length; i++) {
+    const n = currentWeek + 1;
+    for (let i = 0; i < n && i < history.length; i++) {
         const item = history[i];
         const li = document.createElement("li");
-        li.innerText =
-            `Week ${item.week}: ` +
-            `${item.vegetables.join(", ")} | ` +
-            `${item.fruits.join(", ")} | ` +
-            `${item.roots.join(", ")} | ` +
-            `${item.seeds.join(", ")}`;
+        li.innerText = "Week " + item.week + ": " +
+            item.vegetables.join(", ") + " | " +
+            item.fruits.join(", ") + " | " +
+            item.roots.join(", ") + " | " +
+            item.seeds.join(", ");
         list.appendChild(li);
     }
 }
 
-/* ====================================================
-   RESET FUNCTION
-   ==================================================== */
-
-function resetCycle() {
-    if (confirm("Reset the entire 4-week cycle?")) {
-        localStorage.clear();
-        currentWeek = 0;
-        history = [];
-        savedCurrentWeekData = null;
-        renderHistory();
-        document.getElementById("ingredients").innerHTML = "";
-        document.getElementById("weekTitle").innerText = "Week 1";
-        clearManualSelections();
-        clearOrganFilter();
-        allWeeksMode = false;
-        document.getElementById("scopeToggleBtn").classList.remove("active");
-        document.getElementById("scopePill").textContent = "OFF";
-    }
-}
-
-/* ====================================================
-   TOGGLE HISTORY
-   ==================================================== */
-
 function toggleHistory() {
-    const historyList = document.getElementById("historyList");
-    historyList.style.display = historyList.style.display === "none" ? "block" : "none";
+    const list = document.getElementById("historyList");
+    list.style.display = list.style.display === "none" ? "block" : "none";
 }
 
 /* ====================================================
    INITIAL LOAD
    ==================================================== */
-
 buildOrganButtons();
 
-// Restore the current week display from history
 if (history.length > 0) {
-    // currentWeek is 0-indexed (0=Week1, 1=Week2, 2=Week3, 3=Week4)
-    // Make sure currentWeek doesn't exceed history length
     if (currentWeek >= history.length) {
         currentWeek = history.length - 1;
         localStorage.setItem("currentWeek", currentWeek);
     }
-    const weekData = history[currentWeek];
-    displayWeek(weekData);
+    displayWeek(history[currentWeek]);
 } else {
-    // No history yet - start fresh on Week 1 with Week 1 in history
     currentWeek = 0;
-    saveHistory(0); // Populate history with Week 1 only
-    const weekData = getWeekData(0);
-    displayWeek(weekData);
+    saveHistory(0);
+    displayWeek(getWeekData(0));
 }
 
+updateSlotCounter();
+updateOrganBadge();
 renderHistory();
-
 </script>
 </body>
 </html>
+
