@@ -436,7 +436,7 @@ button:hover {
 
 const leafyGreens = ["Spinach", "Kale", "Swiss Chard", "Arugula"];
 const cruciferous  = ["Broccoli", "Red Cabbage", "Brussels Sprouts", "Cauliflower"];
-const antioxidantVeg = ["Beets", "Carrots", "Sweet Potato", "Zucchini", "Cucumber"];
+const supplementalVeg = ["Beets", "Carrots", "Cellery", "Zucchini", "Cucumber"];
 
 const fruits = [
     "Blueberries", "Apple", "Blackberries", "Pomegranate",
@@ -465,7 +465,7 @@ const nutrientDB = {
     "Cauliflower":      { organs: ["Liver", "Gut"],                      nutrients: { sulforaphane: "moderate", fiber: "moderate", vitamin_c: "moderate" } },
     "Beets":            { organs: ["Cardiovascular", "Brain"],           nutrients: { nitrates: "high", betalains: "high", folate: "moderate" } },
     "Carrots":          { organs: ["Eyes", "Immune"],                    nutrients: { beta_carotene: "very high", fiber: "moderate" } },
-    "Sweet Potato":     { organs: ["Immune", "Skin", "Brain"],           nutrients: { beta_carotene: "very high", vitamin_c: "moderate", potassium: "high", fiber: "moderate", vitamin_b6: "moderate" } },
+    "Celery":           { organs: ["Heart", "Gut", "Joints"],            nutrients: { vitamin_k: "high", potassium: "moderate", fiber: "moderate", phthalides: "high", antioxidants: "moderate" } },    
     "Zucchini":         { organs: ["Gut", "Heart"],                      nutrients: { vitamin_c: "moderate", potassium: "moderate", fiber: "low" } },
     "Cucumber":         { organs: ["Hydration", "Skin"],                 nutrients: { vitamin_k: "low", antioxidants: "low" } },
 
@@ -512,7 +512,7 @@ const organSystems = [
    ==================================================== */
 
 const allIngredientPool = {
-    vegetables: [...new Set([...leafyGreens, ...cruciferous, ...antioxidantVeg])],
+    vegetables: [...new Set([...leafyGreens, ...cruciferous, ...supplementalVeg])],
     fruits:     fruits,
     roots:      roots,
     seeds:      seeds
@@ -988,7 +988,7 @@ function generateWeek() {
 
         const veg1   = leafyGreens[weekIndex];
         const veg2   = cruciferous[weekIndex];
-        const veg3   = antioxidantVeg[weekIndex];
+        const veg3   = supplementalVeg[weekIndex];
         const fruit1 = fruits[(weekIndex * 2) % fruits.length];
         const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
         const root1  = roots[(weekIndex * 2) % roots.length];
@@ -1113,7 +1113,7 @@ function getWeekData(weekNumber) {
     
     const veg1   = leafyGreens[weekIndex];
     const veg2   = cruciferous[weekIndex];
-    const veg3   = antioxidantVeg[weekIndex];
+    const veg3   = supplementalVeg[weekIndex];
     const fruit1 = fruits[(weekIndex * 2) % fruits.length];
     const fruit2 = fruits[(weekIndex * 2 + 1) % fruits.length];
     const root1  = roots[(weekIndex * 2) % roots.length];
