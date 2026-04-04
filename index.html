@@ -83,8 +83,7 @@ button:hover { transform: scale(1.05); }
     border: 1px solid #2e7d32;
     background: #f5f5f5;
     font-size: 13px;
-    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    position: relative;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 .ingredient:hover { box-shadow: 0 0 0 2px #2e7d32; }
 .selected {
@@ -92,54 +91,82 @@ button:hover { transform: scale(1.05); }
     color: white;
     border-color: #2e7d32;
 }
-.organ-match {
-    border: 2px solid #00897b;
-    background: #e0f2f1;
-    color: #004d40;
-    font-weight: bold;
-}
-/* Dimmed state when 3 slots full and chip is not selected */
-.ingredient.locked {
-    opacity: 0.38;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* ── SLOT COUNTER ── */
-.slot-counter {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.slot-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1.5px dashed #bbb;
-    background: transparent;
-    transition: background 0.2s ease, border-color 0.2s ease;
-}
-.slot-dot.filled {
-    background: #2e7d32;
-    border-color: #2e7d32;
-}
-
-/* ── HOVER PREVIEW PANEL ── */
-#hoverPreview {
+/* ── PERSISTENT SELECTION PANEL ── */
+#selectionPanel {
     display: none;
     text-align: left;
     background: #e8f5e9;
     border-left: 3px solid #2e7d32;
     border-radius: 6px;
-    padding: 8px 10px;
-    margin-top: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
     font-size: 12px;
     color: #1b5e20;
-    min-height: 40px;
-    transition: opacity 0.15s ease;
 }
-#hoverPreview strong { color: #1b5e20; }
-#hoverPreview .preview-row { margin: 2px 0; }
+#selectionPanel .panel-heading {
+    font-weight: bold;
+    font-size: 13px;
+    color: #1b5e20;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#selectionPanel .clear-btn {
+    font-size: 11px;
+    color: #888;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-weight: normal;
+    margin: 0;
+}
+#selectionPanel .clear-btn:hover {
+    color: #c62828;
+    transform: none;
+}
+#selectionPanel .panel-section { margin-top: 6px; }
+#selectionPanel .panel-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #388e3c;
+    margin-bottom: 4px;
+}
+#selectionPanel .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 2px;
+}
+#selectionPanel .item-chip {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #2e7d32;
+    color: white;
+}
+#selectionPanel .organ-tag {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #b2dfdb;
+    color: #004d40;
+}
+#selectionPanel .nutrient-row {
+    font-size: 12px;
+    color: #1b5e20;
+    margin: 3px 0;
+}
+#selectionPanel .nutrient-level {
+    color: #777;
+    font-style: italic;
+}
+#selectionPanel .divider {
+    border: none;
+    border-top: 1px solid #c8e6c9;
+    margin: 8px 0;
+}
 
 /* ── WEEK NAV ── */
 .week-nav-btn {
@@ -164,171 +191,7 @@ button:hover { transform: scale(1.05); }
     transform: scale(1.05);
 }
 
-/* ── ACTIVE ORGAN BADGE (on card header) ── */
-.organ-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    background: #e0f2f1;
-    color: #004d40;
-    border: 1px solid #80cbc4;
-    border-radius: 6px;
-    padding: 3px 8px;
-    margin-top: 4px;
-    font-weight: bold;
-}
-.organ-badge .clear-x {
-    cursor: pointer;
-    color: #00897b;
-    font-size: 12px;
-    line-height: 1;
-}
-.organ-badge .clear-x:hover { color: #c62828; }
 
-/* ── HEALTH GOALS DRAWER (inside card, footer) ── */
-.goals-footer-toggle {
-    margin-top: 14px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-}
-.goals-footer-toggle:hover .goals-footer-label { color: #2e7d32; }
-.goals-footer-label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #333;
-    transition: color 0.2s ease;
-}
-.goals-footer-arrow {
-    font-size: 11px;
-    color: #888;
-    transition: transform 0.3s ease;
-}
-.goals-footer-arrow.open { transform: rotate(180deg); }
-
-.goals-inner {
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.4s ease;
-}
-.goals-inner.open { max-height: 600px; }
-
-.goals-body {
-    padding-top: 12px;
-}
-
-.goals-instruction {
-    font-size: 12px;
-    color: #555;
-    margin: 0 0 12px 0;
-    padding: 8px 10px;
-    background: #f9f9f9;
-    border-left: 3px solid #2e7d32;
-    border-radius: 0;
-    text-align: left;
-}
-
-.organ-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
-.organ-btn {
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 2px solid #00897b;
-    background: #f0faf9;
-    color: #004d40;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-}
-.organ-btn:hover { background: #b2dfdb; transform: scale(1.04); }
-.organ-btn.active { background: #00897b; color: white; border-color: #00897b; }
-
-.clear-organ-btn {
-    margin-top: 10px;
-    background: #757575;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 14px;
-    font-size: 12px;
-    cursor: pointer;
-}
-.clear-organ-btn:hover { background: #616161; transform: scale(1.03); }
-
-/* Scope toggle */
-.scope-toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 12px 0 6px 0;
-    padding-top: 12px;
-    border-top: 1px solid #e0e0e0;
-}
-.scope-label { font-size: 12px; color: #555; font-weight: bold; }
-.scope-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 2px solid #e65100;
-    background: #fff3e0;
-    color: #bf360c;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 0;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-}
-.scope-toggle-btn:hover { background: #ffe0b2; transform: scale(1.04); }
-.scope-toggle-btn.active { background: #e65100; color: white; border-color: #e65100; }
-.scope-pill {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    background: rgba(0,0,0,0.12);
-    font-weight: normal;
-}
-
-/* Scope badge on card title */
-.scope-badge {
-    display: inline-block;
-    font-size: 11px;
-    background: #e65100;
-    color: white;
-    border-radius: 6px;
-    padding: 2px 8px;
-    margin-left: 8px;
-    vertical-align: middle;
-}
-
-/* Nutrient panel source labels */
-.source-label {
-    display: inline-block;
-    font-size: 11px;
-    background: #e8f5e9;
-    color: #1b5e20;
-    border: 1px solid #a5d6a7;
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin: 2px;
-}
-.source-label.organ-source {
-    background: #e0f2f1;
-    color: #004d40;
-    border-color: #80cbc4;
-}
 </style>
 </head>
 <body>
@@ -343,70 +206,27 @@ button:hover { transform: scale(1.05); }
         <button class="week-nav-btn" onclick="previousWeek()">«</button>
         <div>
             <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
-            <!-- Active organ badge (hidden by default) -->
-            <div id="organBadge" style="display:none; justify-content:center; margin-top:4px;">
-                <span class="organ-badge">
-                    <span id="organBadgeLabel"></span>
-                    <span class="clear-x" onclick="clearOrganFilter()">✕</span>
-                </span>
-            </div>
         </div>
         <button class="week-nav-btn" onclick="nextWeek()">»</button>
     </div>
 
-    <!-- Subtitle + slot counter row -->
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; margin-bottom:4px; padding: 0 4px;">
-        <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin:0; text-align:left;">
-            Select up to 3 ingredients to analyze nutrient synergy
-        </p>
-        <div class="slot-counter" id="slotCounter">
-            <span class="slot-dot" id="dot0"></span>
-            <span class="slot-dot" id="dot1"></span>
-            <span class="slot-dot" id="dot2"></span>
-            <span style="font-size:11px; color:#aaa; margin-left:2px;" id="slotLabel">0 of 3</span>
-        </div>
-    </div>
+    <!-- Subtitle -->
+    <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin:4px 0 8px 0; text-align:left; padding:0 4px;">
+        Select ingredients to analyze nutrient synergy
+    </p>
 
     <!-- Ingredients -->
     <div id="ingredients"></div>
 
-    <!-- Hover preview panel -->
-    <div id="hoverPreview"></div>
-
-    <!-- ── HEALTH GOALS DRAWER (footer of card) ── -->
-    <div class="goals-footer-toggle" onclick="toggleGoalsDrawer()">
-        <span class="goals-footer-label">🎯 Optimize by organ system</span>
-        <span class="goals-arrow" id="goalsArrow">▼</span>
-    </div>
-
-    <div class="goals-inner" id="goalsInner">
-        <div class="goals-body">
-            <p class="goals-instruction">
-                <strong>How to use:</strong> Select an organ system to highlight which ingredients
-                support it. Toggle <em>All 4 Weeks</em> to search the full rotation pool.
-                Your filter persists as you navigate weeks.
-            </p>
-            <div class="organ-grid" id="organGrid"></div>
-            <div class="scope-toggle-row">
-                <span class="scope-label">Search scope:</span>
-                <button class="scope-toggle-btn" id="scopeToggleBtn" onclick="toggleScope()">
-                    🔍 All 4 Weeks
-                    <span class="scope-pill" id="scopePill">OFF</span>
-                </button>
-            </div>
-            <div style="text-align:center; margin-top:8px;">
-                <button class="clear-organ-btn" onclick="clearOrganFilter()">✕ Clear Health Goal</button>
-            </div>
+    <!-- Persistent selection summary panel -->
+    <div id="selectionPanel">
+        <div class="panel-heading">
+            <span>Selected</span>
+            <button class="clear-btn" onclick="clearSelection()">✕ clear</button>
         </div>
+        <div id="panelBody"></div>
     </div>
 
-</div>
-
-<!-- Nutrient Intelligence Panel -->
-<div class="card" id="nutrientPanel" style="display:none;">
-    <h2>Nutrient Intelligence</h2>
-    <div id="nutrientContent"></div>
-    <button onclick="clearSelection()">Clear Selection</button>
 </div>
 
 <!-- History -->
@@ -461,33 +281,12 @@ const nutrientDB = {
 };
 
 /* ====================================================
-   ORGAN SYSTEMS
-   ==================================================== */
-const organSystems = [
-    { label: "🧠 Brain",    organs: ["Brain"],                   desc: "Controls thought, memory, and mood. Benefits from anti-inflammatory compounds and antioxidants that protect neurons." },
-    { label: "🫀 Heart",    organs: ["Heart","Cardiovascular"],  desc: "Pumps blood to every cell. Supported by nutrients that reduce inflammation, lower blood pressure, and improve circulation." },
-    { label: "🫁 Liver",    organs: ["Liver"],                   desc: "Filters toxins, produces bile, and regulates metabolism. Thrives on compounds that support detoxification pathways." },
-    { label: "🦠 Immune",   organs: ["Immune"],                  desc: "Defends against infection and disease. Strengthened by vitamins, minerals, and antioxidants that activate immune cells." },
-    { label: "🫶 Gut",      organs: ["Gut"],                     desc: "Digests food and houses most of the immune system. Fiber and prebiotics feed beneficial bacteria and maintain gut lining." },
-    { label: "👁 Eyes",     organs: ["Eyes"],                    desc: "Processes light and vision. Protected by carotenoids and antioxidants that filter UV damage and slow macular degeneration." },
-    { label: "🩸 Blood",    organs: ["Blood"],                   desc: "Carries oxygen, nutrients, and immune cells. Requires iron, folate, and vitamin K for healthy production and clotting." },
-    { label: "💪 Joints",   organs: ["Joints"],                  desc: "Connect bones and enable movement. Anti-inflammatory compounds reduce stiffness and protect cartilage from breakdown." },
-    { label: "🧬 Cellular", organs: ["Cellular"],                desc: "The foundation of all body function. Antioxidants neutralize free radicals to protect DNA and support healthy cell turnover." },
-    { label: "💧 Skin",     organs: ["Skin","Hydration"],        desc: "The body's largest organ and first defense barrier. Vitamin C, antioxidants, and hydration maintain elasticity and repair." }
-];
-
-const allIngredientPool = {
-    vegetables: [...new Set([...leafyGreens, ...cruciferous, ...supplementalVeg])],
-    fruits, roots, seeds
-};
-
-/* ====================================================
    STATE
    ==================================================== */
 let selectedItems        = [];
-let activeOrgan          = null;   // persists across week navigation now
-let allWeeksMode         = false;
 let savedCurrentWeekData = null;
+
+const NUTRIENT_LEVELS = { "low":1, "moderate":2, "high":3, "very high":4 };
 
 /* ====================================================
    LOAD SAVED DATA
@@ -499,368 +298,94 @@ let history = localStorage.getItem("shakeHistory")
     ? JSON.parse(localStorage.getItem("shakeHistory")) : [];
 
 /* ====================================================
-   SLOT COUNTER
+   PERSISTENT SELECTION PANEL
    ==================================================== */
-function updateSlotCounter() {
-    const n = selectedItems.length;
-    for (let i = 0; i < 3; i++) {
-        const dot = document.getElementById("dot" + i);
-        dot.classList.toggle("filled", i < n);
-    }
-    document.getElementById("slotLabel").textContent = n + " of 3";
+function updateSelectionPanel() {
+    const panel = document.getElementById("selectionPanel");
+    const body  = document.getElementById("panelBody");
 
-    // Lock unselected chips when full
-    document.querySelectorAll(".ingredient").forEach(el => {
-        if (n >= 3 && !el.classList.contains("selected")) {
-            el.classList.add("locked");
-        } else {
-            el.classList.remove("locked");
-        }
-    });
-}
-
-/* ====================================================
-   HOVER PREVIEW
-   ==================================================== */
-function showHoverPreview(itemName) {
-    if (activeOrgan) return;  // don't show during organ mode
-    const data = nutrientDB[itemName];
-    if (!data) return;
-    const preview = document.getElementById("hoverPreview");
-    const organs = data.organs.join(", ");
-    const nutrients = Object.entries(data.nutrients)
-        .map(([k, v]) => k.replace(/_/g, " ") + " (" + v + ")")
-        .join(", ");
-    preview.style.display = "block";
-    preview.innerHTML =
-        "<strong>" + itemName + "</strong>" +
-        "<div class='preview-row' style='margin-top:4px;'>Targets: " + organs + "</div>" +
-        "<div class='preview-row'>Key nutrients: " + nutrients + "</div>";
-}
-
-function hideHoverPreview() {
-    const preview = document.getElementById("hoverPreview");
-    preview.style.display = "none";
-    preview.innerHTML = "";
-}
-
-/* ====================================================
-   ORGAN BADGE (on card header)
-   ==================================================== */
-function updateOrganBadge() {
-    const badge = document.getElementById("organBadge");
-    const label = document.getElementById("organBadgeLabel");
-    if (activeOrgan) {
-        badge.style.display = "flex";
-        label.textContent = activeOrgan;
-    } else {
-        badge.style.display = "none";
-        label.textContent = "";
-    }
-}
-
-/* ====================================================
-   HEALTH GOALS DRAWER
-   ==================================================== */
-function buildOrganButtons() {
-    const grid = document.getElementById("organGrid");
-    grid.innerHTML = "";
-    organSystems.forEach(sys => {
-        const btn = document.createElement("button");
-        btn.className = "organ-btn";
-        btn.textContent = sys.label;
-        btn.setAttribute("data-label", sys.label);
-        btn.onclick = () => selectOrgan(sys);
-        grid.appendChild(btn);
-    });
-}
-
-function toggleGoalsDrawer() {
-    const inner = document.getElementById("goalsInner");
-    const arrow  = document.getElementById("goalsArrow");
-    inner.classList.toggle("open");
-    arrow.classList.toggle("open");
-}
-
-/* ====================================================
-   SCOPE TOGGLE
-   ==================================================== */
-function toggleScope() {
-    allWeeksMode = !allWeeksMode;
-    const btn  = document.getElementById("scopeToggleBtn");
-    const pill = document.getElementById("scopePill");
-
-    if (allWeeksMode) {
-        btn.classList.add("active");
-        pill.textContent = "ON";
-        if (activeOrgan) {
-            const sys = organSystems.find(s => s.label === activeOrgan);
-            if (sys) showOrganNutrientPanel(sys);
-        } else {
-            renderAllWeeksCard();
-        }
-    } else {
-        btn.classList.remove("active");
-        pill.textContent = "OFF";
-        restoreCurrentWeekCard();
-        if (activeOrgan) {
-            const sys = organSystems.find(s => s.label === activeOrgan);
-            if (sys) {
-                setTimeout(() => {
-                    highlightOrganMatches(sys.organs);
-                    showOrganNutrientPanel(sys);
-                }, 10);
-            }
-        } else {
-            document.getElementById("nutrientPanel").style.display = "none";
-        }
-    }
-}
-
-function renderAllWeeksCard() {
-    clearManualSelections();
-    document.getElementById("weekTitle").innerHTML =
-        'Full Rotation Pool <span class="scope-badge">All 4 Weeks</span>';
-    document.getElementById("ingredients").innerHTML =
-        renderCategory("Vegetables", allIngredientPool.vegetables) +
-        renderCategory("Fruits",     allIngredientPool.fruits) +
-        renderCategory("Roots",      allIngredientPool.roots) +
-        renderCategory("Seeds",      allIngredientPool.seeds);
-    attachChipEvents();
-}
-
-function restoreCurrentWeekCard() {
-    clearManualSelections();
-    if (savedCurrentWeekData) {
-        displayWeek(savedCurrentWeekData);
-    } else {
-        document.getElementById("weekTitle").innerText = "Week 1";
-        document.getElementById("ingredients").innerHTML = "";
-    }
-}
-
-const DEFAULT_SUBTITLE = "Select up to 3 ingredients to analyze nutrient synergy";
-
-function setCardSubtitle(text, isDefinition = false) {
-    const el = document.getElementById("cardSubtitle");
-    if (!el) return;
-    el.textContent = text;
-    el.style.opacity   = isDefinition ? "1"      : "0.6";
-    el.style.fontStyle = isDefinition ? "italic" : "normal";
-    el.style.color     = isDefinition ? "#2e5a1c" : "";
-}
-
-/* ====================================================
-   ORGAN SELECTION — now persists across navigation
-   ==================================================== */
-function selectOrgan(sys) {
-    if (activeOrgan === sys.label) { clearOrganFilter(); return; }
-    clearManualSelections();
-    activeOrgan = sys.label;
-    setCardSubtitle(sys.desc, true);
-    document.querySelectorAll(".organ-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.getAttribute("data-label") === sys.label));
-    updateOrganBadge();
-    showOrganNutrientPanel(sys);
-    if (!allWeeksMode) highlightOrganMatches(sys.organs);
-}
-
-function clearOrganFilter() {
-    activeOrgan = null;
-    setCardSubtitle(DEFAULT_SUBTITLE, false);
-    document.querySelectorAll(".organ-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("organ-match"));
-    updateOrganBadge();
-    if (allWeeksMode) renderAllWeeksCard();
-    if (selectedItems.length === 0)
-        document.getElementById("nutrientPanel").style.display = "none";
-}
-
-function highlightOrganMatches(targetOrgans) {
-    document.querySelectorAll(".ingredient").forEach(el => {
-        const data = nutrientDB[el.getAttribute("data-item")];
-        if (!data) { el.classList.remove("organ-match"); return; }
-        el.classList.toggle("organ-match", data.organs.some(o => targetOrgans.includes(o)));
-    });
-}
-
-/* ====================================================
-   SCORING ENGINE
-   ==================================================== */
-const NUTRIENT_LEVELS = { "low":1, "moderate":2, "high":3, "very high":4 };
-
-function scoreIngredient(itemName, targetOrgans) {
-    const data = nutrientDB[itemName];
-    if (!data) return 0;
-    const organScore   = data.organs.filter(o => targetOrgans.includes(o)).length;
-    const nutrientScore = Object.values(data.nutrients)
-        .reduce((sum, level) => sum + (NUTRIENT_LEVELS[level] || 0), 0);
-    return (organScore * 1000) + nutrientScore;
-}
-
-function rankCategory(items, targetOrgans, limit) {
-    return items
-        .filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => targetOrgans.includes(o)); })
-        .sort((a, b) => scoreIngredient(b, targetOrgans) - scoreIngredient(a, targetOrgans))
-        .slice(0, limit);
-}
-
-/* ====================================================
-   ORGAN NUTRIENT PANEL
-   ==================================================== */
-function showOrganNutrientPanel(sys) {
-    const isOptimizedMode = allWeeksMode && activeOrgan;
-    let displayByCategory = null;
-    let matchingItems = [];
-
-    if (isOptimizedMode) {
-        const bestVeg   = rankCategory(allIngredientPool.vegetables, sys.organs, 3);
-        const bestFruit = rankCategory(allIngredientPool.fruits,     sys.organs, 2);
-        const bestRoots = rankCategory(allIngredientPool.roots,      sys.organs, 2);
-        const bestSeeds = rankCategory(allIngredientPool.seeds,      sys.organs, 2);
-        displayByCategory = { vegetables: bestVeg, fruits: bestFruit, roots: bestRoots, seeds: bestSeeds };
-        matchingItems = [...bestVeg, ...bestFruit, ...bestRoots, ...bestSeeds];
-        renderOptimizedCard(displayByCategory, sys.label);
-    } else if (allWeeksMode) {
-        matchingItems = [
-            ...allIngredientPool.vegetables, ...allIngredientPool.fruits,
-            ...allIngredientPool.roots,      ...allIngredientPool.seeds
-        ].filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => sys.organs.includes(o)); });
-    } else {
-        matchingItems = Array.from(document.querySelectorAll(".ingredient"))
-            .map(el => el.getAttribute("data-item"))
-            .filter(item => { const d = nutrientDB[item]; return d && d.organs.some(o => sys.organs.includes(o)); });
-    }
-
-    setTimeout(() => highlightOrganMatches(sys.organs), 10);
-
-    const scopeLabel = isOptimizedMode
-        ? "<strong>optimized across all 4 weeks</strong>"
-        : allWeeksMode ? "<strong>all 4 weeks</strong>" : "<strong>this week's shake</strong>";
-
-    if (matchingItems.length === 0) {
-        document.getElementById("nutrientPanel").style.display = "block";
-        document.getElementById("nutrientContent").innerHTML =
-            "<p style='color:#888;'>No ingredients in " + scopeLabel + " directly target <strong>" + sys.label + "</strong>.</p>";
+    if (selectedItems.length === 0) {
+        panel.style.display = "none";
+        body.innerHTML = "";
         return;
     }
 
-    let nutrientMap = {};
-    matchingItems.forEach(item => {
+    panel.style.display = "block";
+
+    // Selected ingredient chips
+    const chipHTML = selectedItems
+        .map(i => "<span class='item-chip'>" + i + "</span>")
+        .join("");
+
+    // Merged organ map — sorted by frequency
+    const organMap = {};
+    selectedItems.forEach(item => {
         const data = nutrientDB[item];
         if (!data) return;
-        const levels = ["low","moderate","high","very high"];
-        for (let n in data.nutrients) {
-            const existing = nutrientMap[n] ? levels.indexOf(nutrientMap[n]) : -1;
-            const incoming = levels.indexOf(data.nutrients[n]);
-            if (incoming > existing) nutrientMap[n] = data.nutrients[n];
+        data.organs.forEach(org => { organMap[org] = (organMap[org] || 0) + 1; });
+    });
+    const organTags = Object.keys(organMap)
+        .sort((a, b) => organMap[b] - organMap[a])
+        .map(org => "<span class='organ-tag'>" + org + "</span>")
+        .join("");
+
+    // Merged nutrient map — keep highest level per nutrient, sort highest → lowest
+    const nutrientMap = {};
+    selectedItems.forEach(item => {
+        const data = nutrientDB[item];
+        if (!data) return;
+        for (const [n, level] of Object.entries(data.nutrients)) {
+            const existing = nutrientMap[n] ? NUTRIENT_LEVELS[nutrientMap[n]] : 0;
+            if ((NUTRIENT_LEVELS[level] || 0) > existing) nutrientMap[n] = level;
         }
     });
 
-    const nutrientList = Object.entries(nutrientMap)
-        .map(([k, v]) => k.replace(/_/g," ") + " <em style='color:#888;'>(" + v + ")</em>")
-        .join("<br>");
+    const nutrientRows = Object.entries(nutrientMap)
+        .sort((a, b) => (NUTRIENT_LEVELS[b[1]] || 0) - (NUTRIENT_LEVELS[a[1]] || 0))
+        .map(([k, v]) =>
+            "<div class='nutrient-row'>" +
+            k.replace(/_/g, " ") +
+            " <span class='nutrient-level'>(" + v + ")</span>" +
+            "</div>"
+        ).join("");
 
-    let sourceHTML = "";
-    if (isOptimizedMode && displayByCategory) {
-        [["Vegetables", displayByCategory.vegetables], ["Fruits", displayByCategory.fruits],
-         ["Roots", displayByCategory.roots], ["Seeds", displayByCategory.seeds]].forEach(([label, items]) => {
-            if (items.length === 0) return;
-            const chips = items.map(item => "<span class='source-label organ-source'>" + item + "</span>").join(" ");
-            sourceHTML += "<div style='margin-bottom:6px;'><span style='font-size:11px;font-weight:bold;color:#666;'>" + label + ":</span> " + chips + "</div>";
-        });
-    } else {
-        sourceHTML = matchingItems.map(item => "<span class='source-label organ-source'>" + item + "</span>").join(" ");
-    }
-
-    const bgColor     = isOptimizedMode ? "#fce4ec" : allWeeksMode ? "#fff3e0" : "#e0f2f1";
-    const borderColor = isOptimizedMode ? "#c2185b" : allWeeksMode ? "#e65100" : "#00897b";
-    const modeNote    = isOptimizedMode
-        ? "Top-ranked ingredients selected from the full 4-week pool — scored by organ match strength and nutrient density."
-        : allWeeksMode ? "Highlighted in teal on the full rotation card above." : "Highlighted in teal on the shake card above.";
-
-    document.getElementById("nutrientPanel").style.display = "block";
-    document.getElementById("nutrientContent").innerHTML =
-        "<p style='font-size:12px;color:#555;background:" + bgColor + ";border-left:3px solid " + borderColor + ";padding:8px 10px;border-radius:6px;text-align:left;margin-bottom:12px;'>" +
-        (isOptimizedMode ? "🏆 <strong>Optimized combo</strong> for " : "Showing ingredients from ") + scopeLabel + " that support <strong>" + sys.label + "</strong>. " + modeNote +
-        "</p>" +
-        "<h3 style='margin-bottom:6px;'>Best Picks" + (isOptimizedMode ? " (ranked)" : "") + ":</h3>" +
-        "<div style='margin-bottom:12px;'>" + sourceHTML + "</div>" +
-        "<h3 style='margin-bottom:6px;'>Combined Key Nutrients:</h3>" +
-        "<p style='text-align:left;'>" + nutrientList + "</p>";
-}
-
-function renderOptimizedCard(byCategory, organLabel) {
-    document.getElementById("weekTitle").innerHTML =
-        "🏆 Optimized for " + organLabel + " <span class='scope-badge' style='background:#c2185b;'>Best Picks</span>";
-    document.getElementById("ingredients").innerHTML =
-        renderCategory("Vegetables", byCategory.vegetables) +
-        renderCategory("Fruits",     byCategory.fruits) +
-        renderCategory("Roots",      byCategory.roots) +
-        renderCategory("Seeds",      byCategory.seeds);
-    attachChipEvents();
+    body.innerHTML =
+        "<div class='chip-row'>" + chipHTML + "</div>" +
+        "<hr class='divider'>" +
+        "<div class='panel-section'>" +
+            "<div class='panel-label'>Supports</div>" +
+            "<div class='chip-row'>" + organTags + "</div>" +
+        "</div>" +
+        "<hr class='divider'>" +
+        "<div class='panel-section'>" +
+            "<div class='panel-label'>Key nutrients</div>" +
+            nutrientRows +
+        "</div>";
 }
 
 /* ====================================================
    MANUAL SELECTION
    ==================================================== */
 function toggleSelect(element, itemName) {
-    if (activeOrgan) return;
-    if (element.classList.contains("locked")) return;  // respect lock state
-
     if (selectedItems.includes(itemName)) {
         selectedItems = selectedItems.filter(i => i !== itemName);
         element.classList.remove("selected");
-        updateNutrientPanel();
-        updateSlotCounter();
-        return;
+    } else {
+        selectedItems.push(itemName);
+        element.classList.add("selected");
     }
-    if (selectedItems.length >= 3) return;
-    selectedItems.push(itemName);
-    element.classList.add("selected");
-    updateNutrientPanel();
-    updateSlotCounter();
+
+    updateSelectionPanel();
 }
 
 function clearManualSelections() {
     selectedItems = [];
-    document.querySelectorAll(".ingredient").forEach(el => {
-        el.classList.remove("selected", "organ-match", "locked");
-    });
-    document.getElementById("nutrientPanel").style.display = "none";
-    hideHoverPreview();
-    updateSlotCounter();
+    document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
+    updateSelectionPanel();
 }
 
 function clearSelection() {
     clearManualSelections();
-    clearOrganFilter();
-}
-
-/* ====================================================
-   MANUAL NUTRIENT PANEL
-   ==================================================== */
-function updateNutrientPanel() {
-    if (selectedItems.length === 0) {
-        document.getElementById("nutrientPanel").style.display = "none";
-        return;
-    }
-    document.getElementById("nutrientPanel").style.display = "block";
-    let organMap = {}, nutrientMap = {};
-    selectedItems.forEach(item => {
-        const data = nutrientDB[item];
-        if (!data) return;
-        data.organs.forEach(org => { organMap[org] = (organMap[org] || 0) + 1; });
-        for (let n in data.nutrients) nutrientMap[n] = data.nutrients[n];
-    });
-    const organList = Object.keys(organMap).sort((a,b) => organMap[b]-organMap[a]).join(", ");
-    const nutrientList = Object.entries(nutrientMap)
-        .map(([k,v]) => k.replace(/_/g," ") + " <em style='color:#888;'>(" + v + ")</em>").join("<br>");
-    document.getElementById("nutrientContent").innerHTML =
-        "<p style='font-size:12px;color:#555;background:#e8f5e9;padding:8px 10px;border-radius:6px;text-align:left;margin-bottom:12px;'>" +
-        "Showing nutrient synergy for your <strong>" + selectedItems.length + " selected ingredient" + (selectedItems.length > 1 ? "s" : "") + "</strong>.</p>" +
-        "<h3>Supports:</h3><p>" + organList + "</p>" +
-        "<h3>Key Nutrients:</h3><p style='text-align:left;'>" + nutrientList + "</p>";
 }
 
 /* ====================================================
@@ -872,21 +397,10 @@ function renderCategory(label, items) {
         "<div class='ingredient-group'>" +
         items.map(item =>
             "<span class='ingredient' data-item='" + item.replace(/'/g, "\\'") + "'" +
-            " onclick=\"toggleSelect(this,'" + item.replace(/'/g, "\\'") + "')\"" +
-            " onmouseenter=\"showHoverPreview('" + item.replace(/'/g, "\\'") + "')\"" +
-            " onmouseleave=\"hideHoverPreview()\">" +
+            " onclick=\"toggleSelect(this,'" + item.replace(/'/g, "\\'") + "')\">" +
             item + "</span>"
         ).join("") +
         "</div></div>";
-}
-
-/* Re-attach hover events after dynamic card renders (optimized/all-weeks) */
-function attachChipEvents() {
-    document.querySelectorAll(".ingredient").forEach(el => {
-        const item = el.getAttribute("data-item");
-        el.onmouseenter = () => showHoverPreview(item);
-        el.onmouseleave = () => hideHoverPreview();
-    });
 }
 
 /* ====================================================
@@ -911,7 +425,6 @@ function displayWeek(data) {
         renderCategory("Fruits",     data.fruits) +
         renderCategory("Roots",      data.roots) +
         renderCategory("Seeds",      data.seeds);
-    attachChipEvents();
 }
 
 /* ====================================================
@@ -922,49 +435,18 @@ function navigateWeek(newWeek) {
     card.classList.add("fade");
     setTimeout(() => {
         currentWeek = newWeek;
-        const weekData = getWeekData(currentWeek);
-
-        // Clear manual selections but KEEP activeOrgan
         selectedItems = [];
-        document.querySelectorAll(".ingredient").forEach(el =>
-            el.classList.remove("selected", "organ-match", "locked"));
-        document.getElementById("nutrientPanel").style.display = "none";
-        hideHoverPreview();
-        updateSlotCounter();
-
-        // Reset all-weeks mode on navigation
-        if (allWeeksMode) {
-            allWeeksMode = false;
-            document.getElementById("scopeToggleBtn").classList.remove("active");
-            document.getElementById("scopePill").textContent = "OFF";
-        }
-
-        displayWeek(weekData);
+        document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
+        updateSelectionPanel();
+        displayWeek(getWeekData(currentWeek));
         saveHistory(currentWeek);
         localStorage.setItem("currentWeek", currentWeek);
-
-        // Re-apply organ filter to new week's chips if one is active
-        if (activeOrgan) {
-            const sys = organSystems.find(s => s.label === activeOrgan);
-            if (sys) {
-                setCardSubtitle(sys.desc, true);
-                setTimeout(() => {
-                    highlightOrganMatches(sys.organs);
-                    showOrganNutrientPanel(sys);
-                }, 10);
-            }
-        }
-
         card.classList.remove("fade");
     }, 300);
 }
 
-function previousWeek() {
-    navigateWeek(currentWeek === 0 ? 3 : currentWeek - 1);
-}
-function nextWeek() {
-    navigateWeek(currentWeek === 3 ? 0 : currentWeek + 1);
-}
+function previousWeek() { navigateWeek(currentWeek === 0 ? 3 : currentWeek - 1); }
+function nextWeek()      { navigateWeek(currentWeek === 3 ? 0 : currentWeek + 1); }
 
 /* ====================================================
    HISTORY
@@ -1000,8 +482,6 @@ function toggleHistory() {
 /* ====================================================
    INITIAL LOAD
    ==================================================== */
-buildOrganButtons();
-
 if (history.length > 0) {
     if (currentWeek >= history.length) {
         currentWeek = history.length - 1;
@@ -1014,8 +494,6 @@ if (history.length > 0) {
     displayWeek(getWeekData(0));
 }
 
-updateSlotCounter();
-updateOrganBadge();
 renderHistory();
 </script>
 </body>
