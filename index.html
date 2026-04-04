@@ -154,13 +154,42 @@ button:hover { transform: scale(1.05); }
     color: #004d40;
 }
 #selectionPanel .nutrient-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 12px;
     color: #1b5e20;
-    margin: 3px 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    margin: 1px 0;
+}
+#selectionPanel .nutrient-row:hover {
+    background: #c8e6c9;
+}
+#selectionPanel .nutrient-row.open {
+    background: #2e7d32;
+    color: white;
+    border-radius: 4px 4px 0 0;
+}
+#selectionPanel .nutrient-row.open .nutrient-level {
+    color: #a5d6a7;
 }
 #selectionPanel .nutrient-level {
     color: #777;
     font-style: italic;
+    font-size: 11px;
+}
+#selectionPanel .nutrient-desc {
+    font-size: 11px;
+    color: #1b5e20;
+    background: white;
+    border-left: 2px solid #2e7d32;
+    border-radius: 0 0 4px 4px;
+    padding: 6px 8px 7px 10px;
+    margin-bottom: 2px;
+    line-height: 1.5;
 }
 #selectionPanel .divider {
     border: none;
@@ -289,6 +318,45 @@ let savedCurrentWeekData = null;
 const NUTRIENT_LEVELS = { "low":1, "moderate":2, "high":3, "very high":4 };
 
 /* ====================================================
+   NUTRIENT DESCRIPTIONS
+   ==================================================== */
+const nutrientDescDB = {
+    iron:             "Essential for making hemoglobin, which carries oxygen in red blood cells. Low iron causes fatigue and impaired immune function.",
+    folate:           "A B-vitamin critical for DNA synthesis and cell division. Especially important for brain health and during periods of rapid growth.",
+    magnesium:        "Involved in over 300 enzymatic reactions. Supports muscle function, nerve signaling, blood sugar regulation, and bone strength.",
+    vitamin_k:        "Activates proteins needed for blood clotting and bone mineralization. Also plays a role in preventing arterial calcification.",
+    lutein:           "A carotenoid that accumulates in the retina. Protects against blue light damage and reduces risk of macular degeneration.",
+    vitamin_c:        "A potent antioxidant that supports immune defense, collagen synthesis, and iron absorption. Water-soluble and not stored by the body.",
+    beta_carotene:    "A precursor to vitamin A. Supports vision, immune function, and skin health. Also acts as an antioxidant neutralizing free radicals.",
+    fiber:            "Feeds beneficial gut bacteria, slows glucose absorption, and promotes bowel regularity. Reduces risk of cardiovascular disease.",
+    potassium:        "Regulates fluid balance, nerve signals, and muscle contractions. Counteracts sodium's effect on blood pressure.",
+    nitrates:         "Converted to nitric oxide in the body, which dilates blood vessels. Improves blood flow, lowers blood pressure, and enhances exercise performance.",
+    anthocyanins:     "Pigments that give berries their deep color. Powerful antioxidants that protect brain cells, reduce inflammation, and support cardiovascular health.",
+    sulforaphane:     "A sulfur compound formed when cruciferous vegetables are chewed or chopped. Activates detoxification enzymes in the liver and has anti-cancer properties.",
+    betalains:        "Pigments unique to beets. Act as antioxidants and anti-inflammatory agents. Support liver detox and may improve exercise recovery.",
+    quercetin:        "A flavonoid found in apples and onions. Acts as an antihistamine, reduces inflammation, and may protect against heart disease.",
+    punicalagins:     "Potent antioxidants found almost exclusively in pomegranate. Shown to reduce inflammation and lower LDL oxidation.",
+    antioxidants:     "Compounds that neutralize free radicals — unstable molecules that damage cells and accelerate aging. Reduce risk of chronic disease.",
+    ellagic_acid:     "Found in raspberries and pomegranate. Exhibits anti-inflammatory and anti-carcinogenic properties. Supports gut microbiome health.",
+    naringin:         "A flavonoid in grapefruit responsible for its bitter taste. Supports liver health, reduces cholesterol, and has anti-inflammatory effects.",
+    hesperidin:       "A flavonoid in citrus peel and flesh. Improves blood vessel integrity, reduces inflammation, and supports circulation.",
+    vitamin_k2:       "Directs calcium into bones rather than arteries. Distinct from K1 — works synergistically with vitamin D for bone and cardiovascular health.",
+    curcumin:         "The active polyphenol in turmeric. Strongly inhibits inflammatory pathways (NF-kB). Absorption increases significantly when paired with black pepper.",
+    allicin:          "Formed when garlic is crushed or chopped. Antimicrobial and antiviral. Lowers blood pressure and LDL cholesterol.",
+    sulfur_compounds: "Found in garlic and onions. Support liver detox, reduce platelet clumping, and have broad antimicrobial activity.",
+    gingerols:        "Bioactive compounds in fresh ginger. Reduce nausea, lower inflammatory markers, and may inhibit cancer cell growth.",
+    inulin:           "A prebiotic fiber that feeds beneficial gut bacteria (Bifidobacteria). Improves bowel regularity and enhances mineral absorption.",
+    omega_3:          "Essential fatty acids (ALA in flaxseed). Reduce triglycerides, lower inflammation, and support brain cell membrane structure.",
+    lignans:          "Phytoestrogens in flaxseed. Antioxidant and hormone-balancing. Associated with reduced risk of hormone-related cancers.",
+    selenium:         "A trace mineral critical for thyroid hormone metabolism and antioxidant defense via glutathione peroxidase. Brazil nuts are the richest food source.",
+    vitamin_e:        "A fat-soluble antioxidant that protects cell membranes from oxidative damage. Works synergistically with selenium.",
+    zinc:             "Required for immune cell production, wound healing, protein synthesis, and taste/smell perception. Commonly deficient.",
+    phthalides:       "Compounds unique to celery. Relax arterial muscle tissue to lower blood pressure and improve circulation.",
+    vitamin_c2:       "See vitamin C.",
+};
+
+
+/* ====================================================
    LOAD SAVED DATA
    ==================================================== */
 let currentWeek = localStorage.getItem("currentWeek")
@@ -300,6 +368,8 @@ let history = localStorage.getItem("shakeHistory")
 /* ====================================================
    PERSISTENT SELECTION PANEL
    ==================================================== */
+let openNutrient = null; // tracks which nutrient row is expanded
+
 function updateSelectionPanel() {
     const panel = document.getElementById("selectionPanel");
     const body  = document.getElementById("panelBody");
@@ -307,11 +377,15 @@ function updateSelectionPanel() {
     if (selectedItems.length === 0) {
         panel.style.display = "none";
         body.innerHTML = "";
+        openNutrient = null;
         return;
     }
 
     panel.style.display = "block";
+    renderSelectionPanelBody(body);
+}
 
+function renderSelectionPanelBody(body) {
     // Selected ingredient chips
     const chipHTML = selectedItems
         .map(i => "<span class='item-chip'>" + i + "</span>")
@@ -340,14 +414,21 @@ function updateSelectionPanel() {
         }
     });
 
-    const nutrientRows = Object.entries(nutrientMap)
-        .sort((a, b) => (NUTRIENT_LEVELS[b[1]] || 0) - (NUTRIENT_LEVELS[a[1]] || 0))
-        .map(([k, v]) =>
-            "<div class='nutrient-row'>" +
-            k.replace(/_/g, " ") +
-            " <span class='nutrient-level'>(" + v + ")</span>" +
-            "</div>"
-        ).join("");
+    const sortedNutrients = Object.entries(nutrientMap)
+        .sort((a, b) => (NUTRIENT_LEVELS[b[1]] || 0) - (NUTRIENT_LEVELS[a[1]] || 0));
+
+    const nutrientRows = sortedNutrients.map(([k, v]) => {
+        const isOpen = openNutrient === k;
+        const desc   = nutrientDescDB[k];
+        const rowClass = "nutrient-row" + (isOpen ? " open" : "");
+        const descHTML = (isOpen && desc)
+            ? "<div class='nutrient-desc'>" + desc + "</div>"
+            : "";
+        return "<div class='" + rowClass + "' onclick='toggleNutrient(\"" + k + "\")'>" +
+                   "<span>" + k.replace(/_/g, " ") + "</span>" +
+                   "<span class='nutrient-level'>(" + v + ")</span>" +
+               "</div>" + descHTML;
+    }).join("");
 
     body.innerHTML =
         "<div class='chip-row'>" + chipHTML + "</div>" +
@@ -361,6 +442,12 @@ function updateSelectionPanel() {
             "<div class='panel-label'>Key nutrients</div>" +
             nutrientRows +
         "</div>";
+}
+
+function toggleNutrient(key) {
+    openNutrient = (openNutrient === key) ? null : key;
+    const body = document.getElementById("panelBody");
+    if (body) renderSelectionPanelBody(body);
 }
 
 /* ====================================================
@@ -380,6 +467,7 @@ function toggleSelect(element, itemName) {
 
 function clearManualSelections() {
     selectedItems = [];
+    openNutrient = null;
     document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
     updateSelectionPanel();
 }
