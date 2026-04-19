@@ -44,7 +44,6 @@
   }
   #root { position: relative; z-index: 1; }
 
-  /* ── DESKTOP LAYOUT ── */
   .app {
     max-width: 1200px;
     margin: 0 auto;
@@ -132,7 +131,6 @@
     color: var(--warm-text); cursor: pointer;
     transition: all 0.18s ease; user-select: none;
     touch-action: manipulation;
-    /* Min touch target */
     min-height: 36px; display: flex; align-items: center;
   }
   .chip:hover { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(79,158,107,0.12); transform: translateY(-1px); }
@@ -143,7 +141,6 @@
   }
   .chip.selected:hover { background: var(--leaf); border-color: var(--leaf); }
 
-  /* ── DESKTOP ANALYSIS PANEL ── */
   .analysis-card {
     position: sticky; top: 24px;
     background: var(--forest); border-radius: 20px;
@@ -241,7 +238,6 @@
     margin: 4px 6px 8px;
   }
 
-  /* ── HISTORY ── */
   .history-card {
     margin-top: 28px; background: var(--cream);
     border-radius: 20px; padding: 22px 28px;
@@ -273,7 +269,6 @@
     color: var(--leaf);
   }
 
-  /* ── MOBILE BOTTOM SHEET ── */
   .mobile-fab {
     display: none;
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
@@ -297,7 +292,6 @@
     margin-left: 8px;
   }
 
-  /* Overlay */
   .sheet-overlay {
     display: none;
     position: fixed; inset: 0;
@@ -308,7 +302,6 @@
   }
   @keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
 
-  /* Bottom sheet */
   .bottom-sheet {
     display: none;
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -366,7 +359,6 @@
   }
   .sheet-body::-webkit-scrollbar { display: none; }
 
-  /* ── TWEAKS PANEL ── */
   .tweaks-panel {
     position: fixed; bottom: 24px; right: 24px;
     background: var(--forest);
@@ -392,10 +384,8 @@
   .tweak-opt.active { background: var(--mint); border-color: var(--mint); color: white; }
   .tweak-opt:hover:not(.active) { background: rgba(255,255,255,0.12); }
 
-  /* ── MOBILE BREAKPOINT ── */
   @media (max-width: 720px) {
     .app { padding: 0 16px 100px; }
-
     .header {
       padding: 24px 0 20px;
       flex-direction: row; align-items: center;
@@ -404,30 +394,18 @@
     .wordmark-title { font-size: 22px; }
     .wordmark-leaf  { font-size: 10px; }
     .header-meta    { font-size: 11px; }
-
     .two-col { grid-template-columns: 1fr; gap: 0; }
-
-    /* Hide desktop analysis column on mobile */
     .two-col > div:last-child { display: none; }
-
     .card { border-radius: 16px; padding: 18px; }
     .week-label { font-size: 20px; }
-
-    /* Larger chips for touch */
     .chip { min-height: 40px; font-size: 14px; }
-
-    /* Show mobile elements */
     .mobile-fab      { display: flex; align-items: center; }
     .sheet-overlay   { display: block; }
     .bottom-sheet    { display: flex; }
-
-    /* History stacks below with less margin */
     .history-card { border-radius: 16px; padding: 18px 20px; }
-
     .tweaks-panel { bottom: 90px; right: 12px; width: 210px; }
   }
 
-  /* When sheet/overlay hidden via JS */
   .sheet-overlay.hidden,
   .bottom-sheet.hidden { display: none !important; }
 </style>
@@ -444,7 +422,7 @@ const cruciferous     = ["Broccoli","Red Cabbage","Brussels Sprouts","Cauliflowe
 const supplementalVeg = ["Beets","Carrots","Celery","Zucchini","Cucumber"];
 const fruits = ["Blueberries","Apple","Blackberries","Pomegranate","Raspberries","Grapefruit","Orange","Kiwi"];
 const roots  = ["Turmeric + Black Pepper","Garlic","Ginger Root","Burdock Root"];
-const seeds  = ["Brown Flaxseed","Pumpkin Seeds","Brazil Nuts"];
+const seeds  = ["Brown Flaxseed","Pumpkin Seeds","Brazil Nuts","Walnuts"];
 
 const nutrientDB = {
   "Spinach":                 { organs:["Brain","Liver","Heart"],             nutrients:{iron:"high",folate:"high",magnesium:"moderate",vitamin_k:"high",lutein:"moderate"} },
@@ -475,6 +453,7 @@ const nutrientDB = {
   "Brown Flaxseed":          { organs:["Heart","Gut","Brain"],               nutrients:{omega_3:"high",lignans:"high",fiber:"high"} },
   "Pumpkin Seeds":           { organs:["Prostate","Brain","Immune"],         nutrients:{magnesium:"high",zinc:"moderate",iron:"moderate"} },
   "Brazil Nuts":             { organs:["Brain","Heart","Immune","Cellular"], nutrients:{selenium:"very high",vitamin_e:"high",antioxidants:"high",magnesium:"moderate"} },
+  "Walnuts":                 { organs:["Brain","Heart","Gut"],               nutrients:{omega_3:"high",ellagitannins:"high",antioxidants:"moderate",magnesium:"moderate"} },
 };
 
 const nutrientDescDB = {
@@ -495,6 +474,7 @@ const nutrientDescDB = {
   punicalagins:     "Found almost exclusively in pomegranate. Reduce inflammation and lower LDL oxidation.",
   antioxidants:     "Compounds neutralizing free radicals — unstable molecules that damage cells and accelerate aging.",
   ellagic_acid:     "Exhibits anti-inflammatory and anti-carcinogenic properties. Supports gut microbiome health.",
+  ellagitannins:    "Polyphenols unique to walnuts (and pomegranate). Converted by gut bacteria into urolithins — potent anti-inflammatory compounds linked to brain and heart protection.",
   naringin:         "Flavonoid in grapefruit. Supports liver health, reduces cholesterol, and has anti-inflammatory effects.",
   hesperidin:       "Flavonoid in citrus. Improves blood vessel integrity, reduces inflammation, and supports circulation.",
   curcumin:         "The active polyphenol in turmeric. Strongly inhibits inflammatory pathways. Absorption rises with black pepper.",
@@ -529,7 +509,6 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "chipStyle": "rounded"
 }/*EDITMODE-END*/;
 
-/* ── SHARED ANALYSIS CONTENT ── */
 function AnalysisContent({ selected, onClear }) {
   if (selected.length === 0) {
     return (
@@ -592,7 +571,6 @@ function NutrientItem({ name, level, desc }) {
   );
 }
 
-/* ── DESKTOP ANALYSIS PANEL ── */
 function DesktopAnalysis({ selected, onClear }) {
   return (
     <div className="analysis-card">
@@ -607,7 +585,6 @@ function DesktopAnalysis({ selected, onClear }) {
   );
 }
 
-/* ── MOBILE BOTTOM SHEET ── */
 function MobileSheet({ selected, onClear, open, onClose }) {
   const [closing, setClosing] = useState(false);
   const touchStartY = useRef(null);
@@ -618,7 +595,6 @@ function MobileSheet({ selected, onClear, open, onClose }) {
     setTimeout(() => { setClosing(false); onClose(); }, 260);
   }
 
-  // Swipe down to close
   function onTouchStart(e) { touchStartY.current = e.touches[0].clientY; }
   function onTouchEnd(e) {
     if (touchStartY.current !== null) {
@@ -652,7 +628,6 @@ function MobileSheet({ selected, onClear, open, onClose }) {
   );
 }
 
-/* ── HISTORY ── */
 function HistoryPanel({ history, currentWeek }) {
   const [open, setOpen] = useState(false);
   const visible = history.slice(0, currentWeek + 1);
@@ -681,7 +656,6 @@ function HistoryPanel({ history, currentWeek }) {
   );
 }
 
-/* ── TWEAKS ── */
 function TweaksPanel({ tweaks, setTweaks }) {
   return (
     <div className="tweaks-panel">
@@ -712,7 +686,6 @@ function TweaksPanel({ tweaks, setTweaks }) {
   );
 }
 
-/* ── APP ── */
 function App() {
   const [currentWeek, setCurrentWeek] = useState(() => parseInt(localStorage.getItem("tgc_week")||"0"));
   const [selected, setSelected] = useState([]);
@@ -724,7 +697,6 @@ function App() {
   const [showTweaks, setShowTweaks] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Touch swipe for week nav
   const touchRef = useRef(null);
   const cardRef = useRef(null);
 
@@ -765,7 +737,6 @@ function App() {
     }, 280);
   }
 
-  // Swipe on card
   function onCardTouchStart(e) { touchRef.current = e.touches[0].clientX; }
   function onCardTouchEnd(e) {
     if (touchRef.current === null) return;
@@ -842,18 +813,15 @@ function App() {
           <HistoryPanel history={history} currentWeek={currentWeek}/>
         </div>
 
-        {/* Desktop right panel */}
         <DesktopAnalysis selected={selected} onClear={() => setSelected([])}/>
       </div>
 
-      {/* Mobile FAB */}
       <button className="mobile-fab" onClick={() => setSheetOpen(true)}>
         {selected.length > 0 ? (
           <>Nutrient Analysis <span className="fab-count">{selected.length}</span></>
         ) : 'Nutrient Analysis'}
       </button>
 
-      {/* Mobile bottom sheet */}
       <MobileSheet
         selected={selected}
         onClear={() => setSelected([])}
