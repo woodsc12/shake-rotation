@@ -3,587 +3,870 @@
 <head>
 <meta charset="UTF-8">
 <title>The Green Cycle</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: black;
-    color: white;
-    text-align: center;
-    padding: 40px;
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.5;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.card {
-    background: white;
-    max-width: 600px;
-    color: black;
-    margin: auto;
-    padding: 15px;
-    margin-bottom: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    transition: opacity 0.4s ease-in-out;
-}
+  :root {
+    --forest:    #1a3328;
+    --leaf:      #2e6b47;
+    --mint:      #4f9e6b;
+    --sage:      #8abfa0;
+    --parchment: #f4ede3;
+    --cream:     #faf7f2;
+    --gold:      #b5904a;
+    --warm-text: #3a2f28;
+    --muted:     #8a8075;
+    --border:    #e0d8cc;
+  }
 
-.fade { opacity: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--forest);
+    color: var(--warm-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(79,158,107,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(26,51,40,0.8) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  #root { position: relative; z-index: 1; }
 
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: transform 0.2s ease;
-}
+  /* ── DESKTOP LAYOUT ── */
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  .header {
+    padding: 36px 0 28px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 32px;
+  }
+  .wordmark { display: flex; flex-direction: column; line-height: 1; }
+  .wordmark-leaf {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-style: italic;
+    letter-spacing: 0.25em; color: var(--sage);
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .wordmark-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700;
+    color: var(--parchment); letter-spacing: -0.02em;
+  }
+  .wordmark-title span { color: var(--mint); }
+  .header-meta {
+    font-size: 12px; color: var(--sage);
+    letter-spacing: 0.08em; text-transform: uppercase; text-align: right;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 28px; align-items: start;
+  }
+  .card {
+    background: var(--cream);
+    border-radius: 20px; padding: 28px;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.25);
+  }
+  .week-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .week-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 600; color: var(--forest);
+  }
+  .week-label em { font-style: italic; color: var(--mint); font-size: 20px; }
+  .nav-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--forest); font-size: 18px;
+    transition: all 0.2s ease; flex-shrink: 0;
+    touch-action: manipulation;
+  }
+  .nav-btn:hover { background: var(--forest); color: white; border-color: var(--forest); transform: scale(1.08); }
+  .nav-btn:active { transform: scale(0.95); }
 
-button:hover { transform: scale(1.05); }
+  .week-dots {
+    display: flex; gap: 6px; align-items: center;
+    margin-bottom: 20px; padding: 0 2px;
+  }
+  .week-dot {
+    height: 4px; border-radius: 2px;
+    background: var(--border); transition: all 0.3s ease; flex: 1;
+  }
+  .week-dot.active { background: var(--mint); }
+  .week-dot.past   { background: var(--sage); opacity: 0.6; }
 
-/* History panel */
-.history ul {
-    list-style: none;
-    margin: 0;
-    padding-left: 0;
-    max-height: 400px;
-    overflow-y: auto;
-}
-.history li {
-    padding: 12px 0;
-    border-bottom: 1px solid #ccc;
-}
-.history h3 {
-    margin-bottom: 10px;
-    padding: 6px 12px;
-    border: 1px solid #2e7d32;
-    border-radius: 8px;
-    display: inline-block;
-    cursor: pointer;
-}
+  .category-block { margin-bottom: 18px; }
+  .category-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .category-label::after { content:''; flex:1; height:1px; background: var(--border); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* Ingredient layout */
-.category {
-    margin-bottom: 12px;
-    text-align: left;
-}
-.ingredient-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 6px;
-}
+  .chip {
+    padding: 7px 14px; border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: white; font-size: 13px; font-weight: 500;
+    color: var(--warm-text); cursor: pointer;
+    transition: all 0.18s ease; user-select: none;
+    touch-action: manipulation;
+    /* Min touch target */
+    min-height: 36px; display: flex; align-items: center;
+  }
+  .chip:hover { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(79,158,107,0.12); transform: translateY(-1px); }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--forest); border-color: var(--forest);
+    color: var(--parchment); box-shadow: 0 3px 10px rgba(26,51,40,0.25);
+  }
+  .chip.selected:hover { background: var(--leaf); border-color: var(--leaf); }
 
-/* Ingredient chip states */
-.ingredient {
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 20px;
-    border: 1px solid #2e7d32;
-    background: #f5f5f5;
-    font-size: 13px;
-    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-}
-.ingredient:hover { box-shadow: 0 0 0 2px #2e7d32; }
-.selected {
-    background: #2e7d32;
-    color: white;
-    border-color: #2e7d32;
-}
-/* ── PERSISTENT SELECTION PANEL ── */
-#selectionPanel {
+  /* ── DESKTOP ANALYSIS PANEL ── */
+  .analysis-card {
+    position: sticky; top: 24px;
+    background: var(--forest); border-radius: 20px;
+    overflow: hidden; box-shadow: 0 4px 40px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .analysis-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .analysis-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: var(--parchment); font-weight: 600;
+  }
+  .analysis-count {
+    font-size: 12px; color: var(--sage);
+    background: rgba(255,255,255,0.06);
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .analysis-body { padding: 20px 24px; max-height: 70vh; overflow-y: auto; }
+  .analysis-body::-webkit-scrollbar { width: 4px; }
+  .analysis-body::-webkit-scrollbar-track { background: transparent; }
+  .analysis-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  .empty-state { text-align: center; padding: 40px 0; }
+  .empty-icon { font-size: 40px; opacity: 0.3; margin-bottom: 12px; }
+  .empty-text { color: var(--sage); font-size: 13px; line-height: 1.6; }
+
+  .panel-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .panel-chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.1); color: var(--parchment);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .clear-btn {
+    font-size: 11px; color: var(--sage); background: none; border: none;
+    cursor: pointer; padding: 0; margin-left: auto; display: block;
+    margin-bottom: 12px; transition: color 0.2s;
+    touch-action: manipulation;
+  }
+  .clear-btn:hover { color: #e88; }
+
+  .section-label {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--sage); font-weight: 600; margin-bottom: 10px; margin-top: 16px;
+  }
+  .organ-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .organ-chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    background: rgba(79,158,107,0.15); color: var(--sage);
+    border: 1px solid rgba(79,158,107,0.25);
+  }
+  .organ-chip.top {
+    background: rgba(79,158,107,0.28); color: #a8d4ba;
+    border-color: rgba(79,158,107,0.4);
+  }
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 16px 0; }
+
+  .nutrient-item { margin-bottom: 10px; }
+  .nutrient-row-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 5px; cursor: pointer;
+    padding: 6px 6px; border-radius: 6px; transition: background 0.15s;
+    min-height: 36px;
+  }
+  .nutrient-row-header:hover { background: rgba(255,255,255,0.05); }
+  .nutrient-name { font-size: 12px; color: var(--parchment); font-weight: 500; text-transform: capitalize; }
+  .nutrient-badge {
+    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 20px; font-weight: 600;
+  }
+  .badge-low       { background: rgba(255,255,255,0.08); color: var(--muted); }
+  .badge-moderate  { background: rgba(181,144,74,0.2);   color: #d4a85a; }
+  .badge-high      { background: rgba(79,158,107,0.22);  color: var(--sage); }
+  .badge-very-high { background: rgba(79,158,107,0.35);  color: #a8d4ba; }
+
+  .nutrient-bar-track {
+    height: 3px; background: rgba(255,255,255,0.08);
+    border-radius: 2px; overflow: hidden; margin: 0 6px 2px;
+  }
+  .nutrient-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .fill-low       { background: rgba(138,128,117,0.6); width: 25%; }
+  .fill-moderate  { background: var(--gold); width: 50%; }
+  .fill-high      { background: var(--mint); width: 75%; }
+  .fill-very-high { background: #6fcf97; width: 100%; }
+
+  .nutrient-desc-box {
+    font-size: 11px; line-height: 1.6;
+    color: rgba(244,237,227,0.65);
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--mint);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 10px 8px 12px;
+    margin: 4px 6px 8px;
+  }
+
+  /* ── HISTORY ── */
+  .history-card {
+    margin-top: 28px; background: var(--cream);
+    border-radius: 20px; padding: 22px 28px;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.2);
+  }
+  .history-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none; min-height: 44px;
+  }
+  .history-toggle-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 600; color: var(--forest);
+  }
+  .history-caret { font-size: 14px; color: var(--muted); transition: transform 0.25s; }
+  .history-caret.open { transform: rotate(180deg); }
+  .history-list { margin-top: 16px; }
+  .history-entry { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .history-entry:last-child { border-bottom: none; }
+  .history-week-badge {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-weight: 700; color: var(--forest);
+    background: var(--border); border-radius: 8px;
+    padding: 4px 10px; flex-shrink: 0; align-self: flex-start; margin-top: 1px;
+  }
+  .history-items { display: flex; flex-wrap: wrap; gap: 5px; }
+  .history-tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    background: rgba(79,158,107,0.1); border: 1px solid rgba(79,158,107,0.2);
+    color: var(--leaf);
+  }
+
+  /* ── MOBILE BOTTOM SHEET ── */
+  .mobile-fab {
     display: none;
-    text-align: left;
-    background: #e8f5e9;
-    border-left: 3px solid #2e7d32;
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin-top: 10px;
-    font-size: 12px;
-    color: #1b5e20;
-}
-#selectionPanel .panel-heading {
-    font-weight: bold;
-    font-size: 13px;
-    color: #1b5e20;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-#selectionPanel .clear-btn {
-    font-size: 11px;
-    color: #888;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-    font-weight: normal;
-    margin: 0;
-}
-#selectionPanel .clear-btn:hover {
-    color: #c62828;
-    transform: none;
-}
-#selectionPanel .panel-section { margin-top: 6px; }
-#selectionPanel .panel-label {
-    font-size: 11px;
-    font-weight: bold;
-    color: #388e3c;
-    margin-bottom: 4px;
-}
-#selectionPanel .chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 2px;
-}
-#selectionPanel .item-chip {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: #2e7d32;
-    color: white;
-}
-#selectionPanel .organ-tag {
-    font-size: 11px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    background: #b2dfdb;
-    color: #004d40;
-}
-#selectionPanel .nutrient-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #1b5e20;
-    padding: 4px 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s ease;
-    margin: 1px 0;
-}
-#selectionPanel .nutrient-row:hover {
-    background: #c8e6c9;
-}
-#selectionPanel .nutrient-row.open {
-    background: #2e7d32;
-    color: white;
-    border-radius: 4px 4px 0 0;
-}
-#selectionPanel .nutrient-row.open .nutrient-level {
-    color: #a5d6a7;
-}
-#selectionPanel .nutrient-level {
-    color: #777;
-    font-style: italic;
-    font-size: 11px;
-}
-#selectionPanel .nutrient-desc {
-    font-size: 11px;
-    color: #1b5e20;
-    background: white;
-    border-left: 2px solid #2e7d32;
-    border-radius: 0 0 4px 4px;
-    padding: 6px 8px 7px 10px;
-    margin-bottom: 2px;
-    line-height: 1.5;
-}
-#selectionPanel .divider {
-    border: none;
-    border-top: 1px solid #c8e6c9;
-    margin: 8px 0;
-}
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--forest); color: var(--parchment);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 100px; padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  .mobile-fab:active { transform: translateX(-50%) scale(0.97); }
+  .mobile-fab .fab-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--mint); color: white;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 12px; font-weight: 700;
+    margin-left: 8px;
+  }
 
-/* ── WEEK NAV ── */
-.week-nav-btn {
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    color: #333;
-    padding: 6px 12px;
-    font-size: 20px;
-    font-weight: 900;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-.week-nav-btn:hover {
-    background: #2e7d32;
-    color: white;
-    transform: scale(1.05);
-}
+  /* Overlay */
+  .sheet-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    backdrop-filter: blur(2px);
+    animation: overlayIn 0.25s ease;
+  }
+  @keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
 
+  /* Bottom sheet */
+  .bottom-sheet {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--forest);
+    border-radius: 24px 24px 0 0;
+    z-index: 300;
+    max-height: 85vh;
+    overflow: hidden;
+    flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    animation: sheetIn 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  @keyframes sheetIn {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .bottom-sheet.closing {
+    animation: sheetOut 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+  @keyframes sheetOut {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+  }
+  .sheet-handle-bar {
+    display: flex; justify-content: center;
+    padding: 12px 0 8px;
+    flex-shrink: 0;
+  }
+  .sheet-handle {
+    width: 36px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+  }
+  .sheet-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .sheet-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; color: var(--parchment); font-weight: 600;
+  }
+  .sheet-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.08); border: none;
+    color: var(--sage); font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    touch-action: manipulation;
+  }
+  .sheet-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 24px 32px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sheet-body::-webkit-scrollbar { display: none; }
 
+  /* ── TWEAKS PANEL ── */
+  .tweaks-panel {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--forest);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 18px 20px; width: 240px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    z-index: 999; font-size: 13px; color: var(--parchment);
+  }
+  .tweaks-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 600;
+    margin-bottom: 14px; color: var(--sage); letter-spacing: 0.04em;
+  }
+  .tweak-row { margin-bottom: 12px; }
+  .tweak-label { font-size: 11px; color: var(--sage); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .tweak-options { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tweak-opt {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06); color: var(--parchment);
+    transition: all 0.15s; touch-action: manipulation;
+  }
+  .tweak-opt.active { background: var(--mint); border-color: var(--mint); color: white; }
+  .tweak-opt:hover:not(.active) { background: rgba(255,255,255,0.12); }
+
+  /* ── MOBILE BREAKPOINT ── */
+  @media (max-width: 720px) {
+    .app { padding: 0 16px 100px; }
+
+    .header {
+      padding: 24px 0 20px;
+      flex-direction: row; align-items: center;
+      gap: 0; margin-bottom: 20px;
+    }
+    .wordmark-title { font-size: 22px; }
+    .wordmark-leaf  { font-size: 10px; }
+    .header-meta    { font-size: 11px; }
+
+    .two-col { grid-template-columns: 1fr; gap: 0; }
+
+    /* Hide desktop analysis column on mobile */
+    .two-col > div:last-child { display: none; }
+
+    .card { border-radius: 16px; padding: 18px; }
+    .week-label { font-size: 20px; }
+
+    /* Larger chips for touch */
+    .chip { min-height: 40px; font-size: 14px; }
+
+    /* Show mobile elements */
+    .mobile-fab      { display: flex; align-items: center; }
+    .sheet-overlay   { display: block; }
+    .bottom-sheet    { display: flex; }
+
+    /* History stacks below with less margin */
+    .history-card { border-radius: 16px; padding: 18px 20px; }
+
+    .tweaks-panel { bottom: 90px; right: 12px; width: 210px; }
+  }
+
+  /* When sheet/overlay hidden via JS */
+  .sheet-overlay.hidden,
+  .bottom-sheet.hidden { display: none !important; }
 </style>
 </head>
 <body>
+<div id="root"></div>
 
-<h1>The Green Cycle</h1>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
 
-<!-- MAIN SHAKE CARD -->
-<div class="card" id="shakeCard">
+/* ── DATA ── */
+const leafyGreens     = ["Spinach","Kale","Swiss Chard","Arugula"];
+const cruciferous     = ["Broccoli","Red Cabbage","Brussels Sprouts","Cauliflower"];
+const supplementalVeg = ["Beets","Carrots","Celery","Zucchini","Cucumber"];
+const fruits = ["Blueberries","Apple","Blackberries","Pomegranate","Raspberries","Grapefruit","Orange","Kiwi"];
+const roots  = ["Turmeric + Black Pepper","Garlic","Ginger Root","Burdock Root"];
+const seeds  = ["Brown Flaxseed","Pumpkin Seeds","Brazil Nuts"];
 
-    <!-- Header row -->
-    <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
-        <button class="week-nav-btn" onclick="previousWeek()">«</button>
-        <div>
-            <h2 id="weekTitle" style="margin: 0;">Week 1</h2>
-        </div>
-        <button class="week-nav-btn" onclick="nextWeek()">»</button>
-    </div>
-
-    <!-- Subtitle -->
-    <p id="cardSubtitle" style="font-size:12px; opacity:0.6; margin:4px 0 8px 0; text-align:left; padding:0 4px;">
-        Select ingredients to analyze nutrient synergy
-    </p>
-
-    <!-- Ingredients -->
-    <div id="ingredients"></div>
-
-    <!-- Persistent selection summary panel -->
-    <div id="selectionPanel">
-        <div class="panel-heading">
-            <span>Selected</span>
-            <button class="clear-btn" onclick="clearSelection()">✕ clear</button>
-        </div>
-        <div id="panelBody"></div>
-    </div>
-
-</div>
-
-<!-- History -->
-<div class="history">
-    <h3 id="historyToggle" onclick="toggleHistory()">History</h3>
-    <ul id="historyList" style="display:none;"></ul>
-</div>
-
-<script>
-/* ====================================================
-   MASTER FOOD POOLS
-   ==================================================== */
-const leafyGreens     = ["Spinach", "Kale", "Swiss Chard", "Arugula"];
-const cruciferous     = ["Broccoli", "Red Cabbage", "Brussels Sprouts", "Cauliflower"];
-const supplementalVeg = ["Beets", "Carrots", "Celery", "Zucchini", "Cucumber"];
-const fruits = ["Blueberries", "Apple", "Blackberries", "Pomegranate", "Rasberries", "Grapefruit", "Orange", "Kiwi"];
-const roots  = ["Turmeric Root + black pepper", "Garlic", "Ginger Root", "Burdock Root"];
-const seeds  = ["Brown Flaxseed", "Pumpkin Seeds", "Brazil Nuts"];
-
-/* ====================================================
-   NUTRIENT DATABASE
-   ==================================================== */
 const nutrientDB = {
-    "Spinach":          { organs: ["Brain","Liver","Heart"],              nutrients: { iron:"high", folate:"high", magnesium:"moderate", vitamin_k:"high", lutein:"moderate" } },
-    "Kale":             { organs: ["Heart","Liver","Cellular"],           nutrients: { vitamin_k:"very high", vitamin_c:"high", beta_carotene:"high", fiber:"moderate" } },
-    "Swiss Chard":      { organs: ["Heart","Brain","Blood"],              nutrients: { magnesium:"high", potassium:"moderate", vitamin_k:"high", iron:"moderate" } },
-    "Arugula":          { organs: ["Cardiovascular","Liver"],             nutrients: { nitrates:"high", vitamin_k:"moderate", folate:"moderate" } },
-    "Broccoli":         { organs: ["Liver","Brain","Cellular"],           nutrients: { sulforaphane:"high", vitamin_c:"high", fiber:"moderate" } },
-    "Red Cabbage":      { organs: ["Brain","Cardiovascular"],             nutrients: { anthocyanins:"high", vitamin_c:"moderate", fiber:"moderate" } },
-    "Brussels Sprouts": { organs: ["Liver","Gut"],                        nutrients: { sulforaphane:"moderate", fiber:"high", vitamin_k:"high" } },
-    "Cauliflower":      { organs: ["Liver","Gut"],                        nutrients: { sulforaphane:"moderate", fiber:"moderate", vitamin_c:"moderate" } },
-    "Beets":            { organs: ["Cardiovascular","Brain"],             nutrients: { nitrates:"high", betalains:"high", folate:"moderate" } },
-    "Carrots":          { organs: ["Eyes","Immune"],                      nutrients: { beta_carotene:"very high", fiber:"moderate" } },
-    "Celery":           { organs: ["Heart","Gut","Joints"],               nutrients: { vitamin_k:"high", potassium:"moderate", fiber:"moderate", phthalides:"high", antioxidants:"moderate" } },
-    "Zucchini":         { organs: ["Gut","Heart"],                        nutrients: { vitamin_c:"moderate", potassium:"moderate", fiber:"low" } },
-    "Cucumber":         { organs: ["Hydration","Skin"],                   nutrients: { vitamin_k:"low", antioxidants:"low" } },
-    "Blueberries":      { organs: ["Brain","Cardiovascular"],             nutrients: { anthocyanins:"very high", vitamin_c:"moderate", fiber:"moderate" } },
-    "Apple":            { organs: ["Gut","Heart"],                        nutrients: { quercetin:"moderate", fiber:"high", vitamin_c:"low" } },
-    "Blackberries":     { organs: ["Brain","Gut"],                        nutrients: { anthocyanins:"high", fiber:"high", vitamin_c:"moderate" } },
-    "Pomegranate":      { organs: ["Heart","Cellular"],                   nutrients: { punicalagins:"very high", antioxidants:"high" } },
-    "Rasberries":       { organs: ["Gut","Brain"],                        nutrients: { fiber:"very high", vitamin_c:"moderate", ellagic_acid:"moderate" } },
-    "Grapefruit":       { organs: ["Liver","Cardiovascular"],             nutrients: { vitamin_c:"high", naringin:"high", fiber:"moderate" } },
-    "Orange":           { organs: ["Immune","Cardiovascular"],            nutrients: { vitamin_c:"high", hesperidin:"moderate", fiber:"moderate" } },
-    "Kiwi":             { organs: ["Immune","Gut"],                       nutrients: { vitamin_c:"very high", fiber:"moderate", vitamin_k:"moderate" } },
-    "Turmeric Root + black pepper": { organs: ["Brain","Liver","Joints"], nutrients: { curcumin:"high", antioxidants:"high" } },
-    "Garlic":           { organs: ["Heart","Immune"],                     nutrients: { allicin:"high", sulfur_compounds:"high" } },
-    "Ginger Root":      { organs: ["Gut","Brain"],                        nutrients: { gingerols:"high", antioxidants:"moderate" } },
-    "Burdock Root":     { organs: ["Liver","Gut"],                        nutrients: { inulin:"high", antioxidants:"moderate", fiber:"moderate" } },
-    "Brown Flaxseed":   { organs: ["Heart","Gut","Brain"],                nutrients: { omega_3:"high", lignans:"high", fiber:"high" } },
-    "Pumpkin Seeds":    { organs: ["Prostate","Brain","Immune"],          nutrients: { magnesium:"high", zinc:"moderate", iron:"moderate" } },
-    "Brazil Nuts":      { organs: ["Brain","Heart","Immune","Cellular"],  nutrients: { selenium:"very high", vitamin_e:"high", antioxidants:"high", magnesium:"moderate" } }
+  "Spinach":                 { organs:["Brain","Liver","Heart"],             nutrients:{iron:"high",folate:"high",magnesium:"moderate",vitamin_k:"high",lutein:"moderate"} },
+  "Kale":                    { organs:["Heart","Liver","Cellular"],          nutrients:{vitamin_k:"very high",vitamin_c:"high",beta_carotene:"high",fiber:"moderate"} },
+  "Swiss Chard":             { organs:["Heart","Brain","Blood"],             nutrients:{magnesium:"high",potassium:"moderate",vitamin_k:"high",iron:"moderate"} },
+  "Arugula":                 { organs:["Cardiovascular","Liver"],            nutrients:{nitrates:"high",vitamin_k:"moderate",folate:"moderate"} },
+  "Broccoli":                { organs:["Liver","Brain","Cellular"],          nutrients:{sulforaphane:"high",vitamin_c:"high",fiber:"moderate"} },
+  "Red Cabbage":             { organs:["Brain","Cardiovascular"],            nutrients:{anthocyanins:"high",vitamin_c:"moderate",fiber:"moderate"} },
+  "Brussels Sprouts":        { organs:["Liver","Gut"],                       nutrients:{sulforaphane:"moderate",fiber:"high",vitamin_k:"high"} },
+  "Cauliflower":             { organs:["Liver","Gut"],                       nutrients:{sulforaphane:"moderate",fiber:"moderate",vitamin_c:"moderate"} },
+  "Beets":                   { organs:["Cardiovascular","Brain"],            nutrients:{nitrates:"high",betalains:"high",folate:"moderate"} },
+  "Carrots":                 { organs:["Eyes","Immune"],                     nutrients:{beta_carotene:"very high",fiber:"moderate"} },
+  "Celery":                  { organs:["Heart","Gut","Joints"],              nutrients:{vitamin_k:"high",potassium:"moderate",fiber:"moderate",phthalides:"high",antioxidants:"moderate"} },
+  "Zucchini":                { organs:["Gut","Heart"],                       nutrients:{vitamin_c:"moderate",potassium:"moderate",fiber:"low"} },
+  "Cucumber":                { organs:["Hydration","Skin"],                  nutrients:{vitamin_k:"low",antioxidants:"low"} },
+  "Blueberries":             { organs:["Brain","Cardiovascular"],            nutrients:{anthocyanins:"very high",vitamin_c:"moderate",fiber:"moderate"} },
+  "Apple":                   { organs:["Gut","Heart"],                       nutrients:{quercetin:"moderate",fiber:"high",vitamin_c:"low"} },
+  "Blackberries":            { organs:["Brain","Gut"],                       nutrients:{anthocyanins:"high",fiber:"high",vitamin_c:"moderate"} },
+  "Pomegranate":             { organs:["Heart","Cellular"],                  nutrients:{punicalagins:"very high",antioxidants:"high"} },
+  "Raspberries":             { organs:["Gut","Brain"],                       nutrients:{fiber:"very high",vitamin_c:"moderate",ellagic_acid:"moderate"} },
+  "Grapefruit":              { organs:["Liver","Cardiovascular"],            nutrients:{vitamin_c:"high",naringin:"high",fiber:"moderate"} },
+  "Orange":                  { organs:["Immune","Cardiovascular"],           nutrients:{vitamin_c:"high",hesperidin:"moderate",fiber:"moderate"} },
+  "Kiwi":                    { organs:["Immune","Gut"],                      nutrients:{vitamin_c:"very high",fiber:"moderate",vitamin_k:"moderate"} },
+  "Turmeric + Black Pepper": { organs:["Brain","Liver","Joints"],            nutrients:{curcumin:"high",antioxidants:"high"} },
+  "Garlic":                  { organs:["Heart","Immune"],                    nutrients:{allicin:"high",sulfur_compounds:"high"} },
+  "Ginger Root":             { organs:["Gut","Brain"],                       nutrients:{gingerols:"high",antioxidants:"moderate"} },
+  "Burdock Root":            { organs:["Liver","Gut"],                       nutrients:{inulin:"high",antioxidants:"moderate",fiber:"moderate"} },
+  "Brown Flaxseed":          { organs:["Heart","Gut","Brain"],               nutrients:{omega_3:"high",lignans:"high",fiber:"high"} },
+  "Pumpkin Seeds":           { organs:["Prostate","Brain","Immune"],         nutrients:{magnesium:"high",zinc:"moderate",iron:"moderate"} },
+  "Brazil Nuts":             { organs:["Brain","Heart","Immune","Cellular"], nutrients:{selenium:"very high",vitamin_e:"high",antioxidants:"high",magnesium:"moderate"} },
 };
 
-/* ====================================================
-   STATE
-   ==================================================== */
-let selectedItems        = [];
-let savedCurrentWeekData = null;
-
-const NUTRIENT_LEVELS = { "low":1, "moderate":2, "high":3, "very high":4 };
-
-/* ====================================================
-   NUTRIENT DESCRIPTIONS
-   ==================================================== */
 const nutrientDescDB = {
-    iron:             "Essential for making hemoglobin, which carries oxygen in red blood cells. Low iron causes fatigue and impaired immune function.",
-    folate:           "A B-vitamin critical for DNA synthesis and cell division. Especially important for brain health and during periods of rapid growth.",
-    magnesium:        "Involved in over 300 enzymatic reactions. Supports muscle function, nerve signaling, blood sugar regulation, and bone strength.",
-    vitamin_k:        "Activates proteins needed for blood clotting and bone mineralization. Also plays a role in preventing arterial calcification.",
-    lutein:           "A carotenoid that accumulates in the retina. Protects against blue light damage and reduces risk of macular degeneration.",
-    vitamin_c:        "A potent antioxidant that supports immune defense, collagen synthesis, and iron absorption. Water-soluble and not stored by the body.",
-    beta_carotene:    "A precursor to vitamin A. Supports vision, immune function, and skin health. Also acts as an antioxidant neutralizing free radicals.",
-    fiber:            "Feeds beneficial gut bacteria, slows glucose absorption, and promotes bowel regularity. Reduces risk of cardiovascular disease.",
-    potassium:        "Regulates fluid balance, nerve signals, and muscle contractions. Counteracts sodium's effect on blood pressure.",
-    nitrates:         "Converted to nitric oxide in the body, which dilates blood vessels. Improves blood flow, lowers blood pressure, and enhances exercise performance.",
-    anthocyanins:     "Pigments that give berries their deep color. Powerful antioxidants that protect brain cells, reduce inflammation, and support cardiovascular health.",
-    sulforaphane:     "A sulfur compound formed when cruciferous vegetables are chewed or chopped. Activates detoxification enzymes in the liver and has anti-cancer properties.",
-    betalains:        "Pigments unique to beets. Act as antioxidants and anti-inflammatory agents. Support liver detox and may improve exercise recovery.",
-    quercetin:        "A flavonoid found in apples and onions. Acts as an antihistamine, reduces inflammation, and may protect against heart disease.",
-    punicalagins:     "Potent antioxidants found almost exclusively in pomegranate. Shown to reduce inflammation and lower LDL oxidation.",
-    antioxidants:     "Compounds that neutralize free radicals — unstable molecules that damage cells and accelerate aging. Reduce risk of chronic disease.",
-    ellagic_acid:     "Found in raspberries and pomegranate. Exhibits anti-inflammatory and anti-carcinogenic properties. Supports gut microbiome health.",
-    naringin:         "A flavonoid in grapefruit responsible for its bitter taste. Supports liver health, reduces cholesterol, and has anti-inflammatory effects.",
-    hesperidin:       "A flavonoid in citrus peel and flesh. Improves blood vessel integrity, reduces inflammation, and supports circulation.",
-    vitamin_k2:       "Directs calcium into bones rather than arteries. Distinct from K1 — works synergistically with vitamin D for bone and cardiovascular health.",
-    curcumin:         "The active polyphenol in turmeric. Strongly inhibits inflammatory pathways (NF-kB). Absorption increases significantly when paired with black pepper.",
-    allicin:          "Formed when garlic is crushed or chopped. Antimicrobial and antiviral. Lowers blood pressure and LDL cholesterol.",
-    sulfur_compounds: "Found in garlic and onions. Support liver detox, reduce platelet clumping, and have broad antimicrobial activity.",
-    gingerols:        "Bioactive compounds in fresh ginger. Reduce nausea, lower inflammatory markers, and may inhibit cancer cell growth.",
-    inulin:           "A prebiotic fiber that feeds beneficial gut bacteria (Bifidobacteria). Improves bowel regularity and enhances mineral absorption.",
-    omega_3:          "Essential fatty acids (ALA in flaxseed). Reduce triglycerides, lower inflammation, and support brain cell membrane structure.",
-    lignans:          "Phytoestrogens in flaxseed. Antioxidant and hormone-balancing. Associated with reduced risk of hormone-related cancers.",
-    selenium:         "A trace mineral critical for thyroid hormone metabolism and antioxidant defense via glutathione peroxidase. Brazil nuts are the richest food source.",
-    vitamin_e:        "A fat-soluble antioxidant that protects cell membranes from oxidative damage. Works synergistically with selenium.",
-    zinc:             "Required for immune cell production, wound healing, protein synthesis, and taste/smell perception. Commonly deficient.",
-    phthalides:       "Compounds unique to celery. Relax arterial muscle tissue to lower blood pressure and improve circulation.",
-    vitamin_c2:       "See vitamin C.",
+  iron:             "Essential for hemoglobin — the protein that carries oxygen in red blood cells. Low iron causes fatigue and impaired immunity.",
+  folate:           "A B-vitamin critical for DNA synthesis and cell division. Especially important for brain health.",
+  magnesium:        "Involved in 300+ enzymatic reactions. Supports muscle function, nerve signaling, and bone strength.",
+  vitamin_k:        "Activates proteins for blood clotting and bone mineralization. Also prevents arterial calcification.",
+  lutein:           "A carotenoid that accumulates in the retina. Protects against blue light damage and macular degeneration.",
+  vitamin_c:        "A potent antioxidant supporting immune defense, collagen synthesis, and iron absorption.",
+  beta_carotene:    "Precursor to vitamin A. Supports vision, immune function, and skin health.",
+  fiber:            "Feeds beneficial gut bacteria, slows glucose absorption, and promotes bowel regularity.",
+  potassium:        "Regulates fluid balance, nerve signals, and muscle contractions. Counteracts sodium's effect on blood pressure.",
+  nitrates:         "Converted to nitric oxide, which dilates blood vessels. Improves blood flow and lowers blood pressure.",
+  anthocyanins:     "Deep-color pigments in berries. Powerful antioxidants protecting brain cells and cardiovascular health.",
+  sulforaphane:     "Formed when cruciferous vegetables are chewed. Activates liver detox enzymes and has anti-cancer properties.",
+  betalains:        "Unique to beets. Anti-inflammatory antioxidants supporting liver detox and exercise recovery.",
+  quercetin:        "A flavonoid acting as an antihistamine. Reduces inflammation and may protect against heart disease.",
+  punicalagins:     "Found almost exclusively in pomegranate. Reduce inflammation and lower LDL oxidation.",
+  antioxidants:     "Compounds neutralizing free radicals — unstable molecules that damage cells and accelerate aging.",
+  ellagic_acid:     "Exhibits anti-inflammatory and anti-carcinogenic properties. Supports gut microbiome health.",
+  naringin:         "Flavonoid in grapefruit. Supports liver health, reduces cholesterol, and has anti-inflammatory effects.",
+  hesperidin:       "Flavonoid in citrus. Improves blood vessel integrity, reduces inflammation, and supports circulation.",
+  curcumin:         "The active polyphenol in turmeric. Strongly inhibits inflammatory pathways. Absorption rises with black pepper.",
+  allicin:          "Formed when garlic is crushed. Antimicrobial and antiviral. Lowers blood pressure and LDL cholesterol.",
+  sulfur_compounds: "Found in garlic and onions. Support liver detox, reduce platelet clumping, and have antimicrobial activity.",
+  gingerols:        "Bioactive compounds in fresh ginger. Reduce nausea, lower inflammation, and may inhibit cancer cell growth.",
+  inulin:           "A prebiotic fiber feeding beneficial gut bacteria. Improves bowel regularity and mineral absorption.",
+  omega_3:          "Essential fatty acids (ALA in flaxseed). Reduce triglycerides, lower inflammation, support brain structure.",
+  lignans:          "Phytoestrogens in flaxseed. Antioxidant and hormone-balancing. Linked to reduced hormone-related cancer risk.",
+  selenium:         "Critical for thyroid metabolism and antioxidant defense. Brazil nuts are the richest food source.",
+  vitamin_e:        "A fat-soluble antioxidant protecting cell membranes. Works synergistically with selenium.",
+  zinc:             "Required for immune cell production, wound healing, and protein synthesis. Commonly deficient.",
+  phthalides:       "Unique to celery. Relax arterial muscle to lower blood pressure and improve circulation.",
 };
 
+const LEVELS = { low:1, moderate:2, high:3, "very high":4 };
+const LEVEL_WIDTHS = { low:"25%", moderate:"50%", high:"75%", "very high":"100%" };
 
-/* ====================================================
-   LOAD SAVED DATA
-   ==================================================== */
-let currentWeek = localStorage.getItem("currentWeek")
-    ? parseInt(localStorage.getItem("currentWeek")) : 0;
+function getWeekData(n) {
+  const wi = n % 4;
+  return {
+    week: wi + 1,
+    vegetables: [leafyGreens[wi], cruciferous[wi], supplementalVeg[wi]],
+    fruits:  [fruits[(wi*2)%fruits.length], fruits[(wi*2+1)%fruits.length]],
+    roots:   [roots[(wi*2)%roots.length],   roots[(wi*2+1)%roots.length]],
+    seeds,
+  };
+}
 
-let history = localStorage.getItem("shakeHistory")
-    ? JSON.parse(localStorage.getItem("shakeHistory")) : [];
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "density": "compact",
+  "chipStyle": "rounded"
+}/*EDITMODE-END*/;
 
-/* ====================================================
-   PERSISTENT SELECTION PANEL
-   ==================================================== */
-let openNutrient = null; // tracks which nutrient row is expanded
+/* ── SHARED ANALYSIS CONTENT ── */
+function AnalysisContent({ selected, onClear }) {
+  if (selected.length === 0) {
+    return (
+      <div className="empty-state">
+        <div className="empty-icon">⬡</div>
+        <p className="empty-text">Select ingredients to see<br/>organ targets &amp; key nutrients</p>
+      </div>
+    );
+  }
+  const organMap = {};
+  selected.forEach(item => {
+    (nutrientDB[item]?.organs || []).forEach(org => { organMap[org] = (organMap[org]||0)+1; });
+  });
+  const sortedOrgans = Object.entries(organMap).sort((a,b) => b[1]-a[1]);
 
-function updateSelectionPanel() {
-    const panel = document.getElementById("selectionPanel");
-    const body  = document.getElementById("panelBody");
-
-    if (selectedItems.length === 0) {
-        panel.style.display = "none";
-        body.innerHTML = "";
-        openNutrient = null;
-        return;
+  const nutrientMap = {};
+  selected.forEach(item => {
+    for (const [n, lv] of Object.entries(nutrientDB[item]?.nutrients || {})) {
+      if ((LEVELS[lv]||0) > (LEVELS[nutrientMap[n]]||0)) nutrientMap[n] = lv;
     }
+  });
+  const sortedNutrients = Object.entries(nutrientMap).sort((a,b) => (LEVELS[b[1]]||0)-(LEVELS[a[1]]||0));
 
-    panel.style.display = "block";
-    renderSelectionPanelBody(body);
+  return (
+    <>
+      <div className="panel-chips">
+        {selected.map(s => <span key={s} className="panel-chip">{s}</span>)}
+      </div>
+      <button className="clear-btn" onClick={onClear}>✕ clear selection</button>
+
+      <div className="section-label">Organs Supported</div>
+      <div className="organ-chips">
+        {sortedOrgans.map(([org, count]) => (
+          <span key={org} className={`organ-chip${count > 1 ? ' top' : ''}`}>{org}</span>
+        ))}
+      </div>
+
+      <hr className="divider"/>
+      <div className="section-label">Key Nutrients</div>
+      {sortedNutrients.map(([k, v]) => (
+        <NutrientItem key={k} name={k} level={v} desc={nutrientDescDB[k]}/>
+      ))}
+    </>
+  );
 }
 
-function renderSelectionPanelBody(body) {
-    // Selected ingredient chips
-    const chipHTML = selectedItems
-        .map(i => "<span class='item-chip'>" + i + "</span>")
-        .join("");
-
-    // Merged organ map — sorted by frequency
-    const organMap = {};
-    selectedItems.forEach(item => {
-        const data = nutrientDB[item];
-        if (!data) return;
-        data.organs.forEach(org => { organMap[org] = (organMap[org] || 0) + 1; });
-    });
-    const organTags = Object.keys(organMap)
-        .sort((a, b) => organMap[b] - organMap[a])
-        .map(org => "<span class='organ-tag'>" + org + "</span>")
-        .join("");
-
-    // Merged nutrient map — keep highest level per nutrient, sort highest → lowest
-    const nutrientMap = {};
-    selectedItems.forEach(item => {
-        const data = nutrientDB[item];
-        if (!data) return;
-        for (const [n, level] of Object.entries(data.nutrients)) {
-            const existing = nutrientMap[n] ? NUTRIENT_LEVELS[nutrientMap[n]] : 0;
-            if ((NUTRIENT_LEVELS[level] || 0) > existing) nutrientMap[n] = level;
-        }
-    });
-
-    const sortedNutrients = Object.entries(nutrientMap)
-        .sort((a, b) => (NUTRIENT_LEVELS[b[1]] || 0) - (NUTRIENT_LEVELS[a[1]] || 0));
-
-    const nutrientRows = sortedNutrients.map(([k, v]) => {
-        const isOpen = openNutrient === k;
-        const desc   = nutrientDescDB[k];
-        const rowClass = "nutrient-row" + (isOpen ? " open" : "");
-        const descHTML = (isOpen && desc)
-            ? "<div class='nutrient-desc'>" + desc + "</div>"
-            : "";
-        return "<div class='" + rowClass + "' onclick='toggleNutrient(\"" + k + "\")'>" +
-                   "<span>" + k.replace(/_/g, " ") + "</span>" +
-                   "<span class='nutrient-level'>(" + v + ")</span>" +
-               "</div>" + descHTML;
-    }).join("");
-
-    body.innerHTML =
-        "<div class='chip-row'>" + chipHTML + "</div>" +
-        "<hr class='divider'>" +
-        "<div class='panel-section'>" +
-            "<div class='panel-label'>Supports</div>" +
-            "<div class='chip-row'>" + organTags + "</div>" +
-        "</div>" +
-        "<hr class='divider'>" +
-        "<div class='panel-section'>" +
-            "<div class='panel-label'>Key nutrients</div>" +
-            nutrientRows +
-        "</div>";
+function NutrientItem({ name, level, desc }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="nutrient-item">
+      <div className="nutrient-row-header" onClick={() => setOpen(o => !o)}>
+        <span className="nutrient-name">{name.replace(/_/g,' ')}</span>
+        <span className={`nutrient-badge badge-${level.replace(' ','-')}`}>{level}</span>
+      </div>
+      <div className="nutrient-bar-track">
+        <div className={`nutrient-bar-fill fill-${level.replace(' ','-')}`} style={{ width: LEVEL_WIDTHS[level] }}/>
+      </div>
+      {open && desc && <div className="nutrient-desc-box">{desc}</div>}
+    </div>
+  );
 }
 
-function toggleNutrient(key) {
-    openNutrient = (openNutrient === key) ? null : key;
-    const body = document.getElementById("panelBody");
-    if (body) renderSelectionPanelBody(body);
+/* ── DESKTOP ANALYSIS PANEL ── */
+function DesktopAnalysis({ selected, onClear }) {
+  return (
+    <div className="analysis-card">
+      <div className="analysis-header">
+        <span className="analysis-title">Nutrient Analysis</span>
+        {selected.length > 0 && <span className="analysis-count">{selected.length} selected</span>}
+      </div>
+      <div className="analysis-body">
+        <AnalysisContent selected={selected} onClear={onClear}/>
+      </div>
+    </div>
+  );
 }
 
-/* ====================================================
-   MANUAL SELECTION
-   ==================================================== */
-function toggleSelect(element, itemName) {
-    if (selectedItems.includes(itemName)) {
-        selectedItems = selectedItems.filter(i => i !== itemName);
-        element.classList.remove("selected");
-    } else {
-        selectedItems.push(itemName);
-        element.classList.add("selected");
+/* ── MOBILE BOTTOM SHEET ── */
+function MobileSheet({ selected, onClear, open, onClose }) {
+  const [closing, setClosing] = useState(false);
+  const touchStartY = useRef(null);
+  const sheetRef = useRef(null);
+
+  function close() {
+    setClosing(true);
+    setTimeout(() => { setClosing(false); onClose(); }, 260);
+  }
+
+  // Swipe down to close
+  function onTouchStart(e) { touchStartY.current = e.touches[0].clientY; }
+  function onTouchEnd(e) {
+    if (touchStartY.current !== null) {
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      if (dy > 60) close();
+      touchStartY.current = null;
     }
+  }
 
-    updateSelectionPanel();
+  if (!open && !closing) return null;
+
+  return (
+    <>
+      <div className={`sheet-overlay${closing ? ' hidden' : ''}`} onClick={close}/>
+      <div
+        ref={sheetRef}
+        className={`bottom-sheet${closing ? ' closing' : ''}`}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        <div className="sheet-handle-bar"><div className="sheet-handle"/></div>
+        <div className="sheet-header">
+          <span className="sheet-title">Nutrient Analysis</span>
+          <button className="sheet-close" onClick={close}>✕</button>
+        </div>
+        <div className="sheet-body">
+          <AnalysisContent selected={selected} onClear={() => { onClear(); close(); }}/>
+        </div>
+      </div>
+    </>
+  );
 }
 
-function clearManualSelections() {
-    selectedItems = [];
-    openNutrient = null;
-    document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
-    updateSelectionPanel();
+/* ── HISTORY ── */
+function HistoryPanel({ history, currentWeek }) {
+  const [open, setOpen] = useState(false);
+  const visible = history.slice(0, currentWeek + 1);
+  if (visible.length === 0) return null;
+  return (
+    <div className="history-card">
+      <div className="history-toggle" onClick={() => setOpen(o=>!o)}>
+        <span className="history-toggle-title">Log</span>
+        <span className={`history-caret${open?' open':''}`}>▼</span>
+      </div>
+      {open && (
+        <div className="history-list">
+          {visible.map((wk,i) => (
+            <div className="history-entry" key={i}>
+              <span className="history-week-badge">Wk {wk.week}</span>
+              <div className="history-items">
+                {[...wk.vegetables,...wk.fruits,...wk.roots,...wk.seeds].map(item => (
+                  <span key={item} className="history-tag">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function clearSelection() {
-    clearManualSelections();
+/* ── TWEAKS ── */
+function TweaksPanel({ tweaks, setTweaks }) {
+  return (
+    <div className="tweaks-panel">
+      <div className="tweaks-title">Tweaks</div>
+      <div className="tweak-row">
+        <div className="tweak-label">Density</div>
+        <div className="tweak-options">
+          {["compact","comfortable","spacious"].map(d => (
+            <div key={d} className={`tweak-opt${tweaks.density===d?' active':''}`}
+              onClick={()=>setTweaks(t=>({...t,density:d}))}>
+              {d}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="tweak-row">
+        <div className="tweak-label">Chip Style</div>
+        <div className="tweak-options">
+          {["rounded","sharp","pill"].map(s => (
+            <div key={s} className={`tweak-opt${tweaks.chipStyle===s?' active':''}`}
+              onClick={()=>setTweaks(t=>({...t,chipStyle:s}))}>
+              {s}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-/* ====================================================
-   RENDER HELPERS
-   ==================================================== */
-function renderCategory(label, items) {
-    if (!items || items.length === 0) return "";
-    return "<div class='category'><strong>" + label + ":</strong>" +
-        "<div class='ingredient-group'>" +
-        items.map(item =>
-            "<span class='ingredient' data-item='" + item.replace(/'/g, "\\'") + "'" +
-            " onclick=\"toggleSelect(this,'" + item.replace(/'/g, "\\'") + "')\">" +
-            item + "</span>"
-        ).join("") +
-        "</div></div>";
-}
+/* ── APP ── */
+function App() {
+  const [currentWeek, setCurrentWeek] = useState(() => parseInt(localStorage.getItem("tgc_week")||"0"));
+  const [selected, setSelected] = useState([]);
+  const [history, setHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("tgc_history")||"[]"); } catch { return []; }
+  });
+  const [fading, setFading] = useState(false);
+  const [tweaks, setTweaks] = useState(() => ({ ...TWEAK_DEFAULTS }));
+  const [showTweaks, setShowTweaks] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-/* ====================================================
-   WEEK DATA & DISPLAY
-   ==================================================== */
-function getWeekData(weekNumber) {
-    const wi = weekNumber % 4;
-    return {
-        week:       wi + 1,
-        vegetables: [leafyGreens[wi], cruciferous[wi], supplementalVeg[wi]],
-        fruits:     [fruits[(wi*2) % fruits.length], fruits[(wi*2+1) % fruits.length]],
-        roots:      [roots[(wi*2) % roots.length],   roots[(wi*2+1) % roots.length]],
-        seeds
+  // Touch swipe for week nav
+  const touchRef = useRef(null);
+  const cardRef = useRef(null);
+
+  const weekData = getWeekData(currentWeek);
+
+  useEffect(() => {
+    const h = [];
+    for (let i = 0; i <= currentWeek; i++) h.push(getWeekData(i));
+    setHistory(h);
+    localStorage.setItem("tgc_history", JSON.stringify(h));
+    localStorage.setItem("tgc_week", String(currentWeek));
+  }, [currentWeek]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode')   setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
     };
-}
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
 
-function displayWeek(data) {
-    savedCurrentWeekData = data;
-    document.getElementById("weekTitle").innerText = "Week " + data.week;
-    document.getElementById("ingredients").innerHTML =
-        renderCategory("Vegetables", data.vegetables) +
-        renderCategory("Fruits",     data.fruits) +
-        renderCategory("Roots",      data.roots) +
-        renderCategory("Seeds",      data.seeds);
-}
+  const handleTweaks = useCallback((updater) => {
+    setTweaks(t => {
+      const next = typeof updater === 'function' ? updater(t) : updater;
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: next }, '*');
+      return next;
+    });
+  }, []);
 
-/* ====================================================
-   NAVIGATION — organ filter persists
-   ==================================================== */
-function navigateWeek(newWeek) {
-    const card = document.getElementById("shakeCard");
-    card.classList.add("fade");
+  function navigate(dir) {
+    setFading(true);
     setTimeout(() => {
-        currentWeek = newWeek;
-        selectedItems = [];
-        document.querySelectorAll(".ingredient").forEach(el => el.classList.remove("selected"));
-        updateSelectionPanel();
-        displayWeek(getWeekData(currentWeek));
-        saveHistory(currentWeek);
-        localStorage.setItem("currentWeek", currentWeek);
-        card.classList.remove("fade");
-    }, 300);
+      setCurrentWeek(w => dir > 0 ? (w === 3 ? 0 : w+1) : (w === 0 ? 3 : w-1));
+      setSelected([]);
+      setFading(false);
+    }, 280);
+  }
+
+  // Swipe on card
+  function onCardTouchStart(e) { touchRef.current = e.touches[0].clientX; }
+  function onCardTouchEnd(e) {
+    if (touchRef.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchRef.current;
+    if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+    touchRef.current = null;
+  }
+
+  function toggleChip(item) {
+    setSelected(s => s.includes(item) ? s.filter(x=>x!==item) : [...s, item]);
+  }
+
+  const gapMap    = { compact:6, comfortable:8, spacious:12 };
+  const padMap    = { compact:"5px 10px", comfortable:"7px 14px", spacious:"9px 18px" };
+  const chipRadius = { rounded:"100px", sharp:"6px", pill:"100px" };
+  const chipStyle = { borderRadius: chipRadius[tweaks.chipStyle], padding: padMap[tweaks.density] };
+
+  const categories = [
+    { label:"Vegetables",   items: weekData.vegetables },
+    { label:"Fruits",       items: weekData.fruits },
+    { label:"Roots",        items: weekData.roots },
+    { label:"Seeds & Nuts", items: weekData.seeds },
+  ];
+
+  return (
+    <div className="app">
+      <div className="header">
+        <div className="wordmark">
+          <span className="wordmark-leaf">Nutrition Guide</span>
+          <span className="wordmark-title">The <span>Green</span> Cycle</span>
+        </div>
+        <div className="header-meta">
+          Week {weekData.week} of 4<br/>
+          <span style={{opacity:0.5}}>April 2026</span>
+        </div>
+      </div>
+
+      <div className="two-col">
+        <div>
+          <div
+            ref={cardRef}
+            className="card"
+            style={{ opacity: fading ? 0 : 1, transition:'opacity 0.28s ease' }}
+            onTouchStart={onCardTouchStart}
+            onTouchEnd={onCardTouchEnd}
+          >
+            <div className="week-nav">
+              <button className="nav-btn" onClick={() => navigate(-1)}>‹</button>
+              <div className="week-label">Week <em>{weekData.week}</em></div>
+              <button className="nav-btn" onClick={() => navigate(1)}>›</button>
+            </div>
+            <div className="week-dots">
+              {[0,1,2,3].map(i => (
+                <div key={i} className={`week-dot${i===currentWeek%4?' active':i<currentWeek%4?' past':''}`}/>
+              ))}
+            </div>
+            {categories.map(cat => (
+              <div key={cat.label} className="category-block">
+                <div className="category-label">{cat.label}</div>
+                <div className="chips" style={{ gap: gapMap[tweaks.density] }}>
+                  {cat.items.map(item => (
+                    <div key={item}
+                      className={`chip${selected.includes(item)?' selected':''}`}
+                      style={chipStyle}
+                      onClick={() => toggleChip(item)}>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <HistoryPanel history={history} currentWeek={currentWeek}/>
+        </div>
+
+        {/* Desktop right panel */}
+        <DesktopAnalysis selected={selected} onClear={() => setSelected([])}/>
+      </div>
+
+      {/* Mobile FAB */}
+      <button className="mobile-fab" onClick={() => setSheetOpen(true)}>
+        {selected.length > 0 ? (
+          <>Nutrient Analysis <span className="fab-count">{selected.length}</span></>
+        ) : 'Nutrient Analysis'}
+      </button>
+
+      {/* Mobile bottom sheet */}
+      <MobileSheet
+        selected={selected}
+        onClear={() => setSelected([])}
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+      />
+
+      {showTweaks && <TweaksPanel tweaks={tweaks} setTweaks={handleTweaks}/>}
+    </div>
+  );
 }
 
-function previousWeek() { navigateWeek(currentWeek === 0 ? 3 : currentWeek - 1); }
-function nextWeek()      { navigateWeek(currentWeek === 3 ? 0 : currentWeek + 1); }
-
-/* ====================================================
-   HISTORY
-   ==================================================== */
-function saveHistory(weekNumber) {
-    history = [];
-    for (let i = 0; i <= weekNumber; i++) history.push(getWeekData(i));
-    localStorage.setItem("shakeHistory", JSON.stringify(history));
-    renderHistory();
-}
-
-function renderHistory() {
-    const list = document.getElementById("historyList");
-    list.innerHTML = "";
-    const n = currentWeek + 1;
-    for (let i = 0; i < n && i < history.length; i++) {
-        const item = history[i];
-        const li = document.createElement("li");
-        li.innerText = "Week " + item.week + ": " +
-            item.vegetables.join(", ") + " | " +
-            item.fruits.join(", ") + " | " +
-            item.roots.join(", ") + " | " +
-            item.seeds.join(", ");
-        list.appendChild(li);
-    }
-}
-
-function toggleHistory() {
-    const list = document.getElementById("historyList");
-    list.style.display = list.style.display === "none" ? "block" : "none";
-}
-
-/* ====================================================
-   INITIAL LOAD
-   ==================================================== */
-if (history.length > 0) {
-    if (currentWeek >= history.length) {
-        currentWeek = history.length - 1;
-        localStorage.setItem("currentWeek", currentWeek);
-    }
-    displayWeek(history[currentWeek]);
-} else {
-    currentWeek = 0;
-    saveHistory(0);
-    displayWeek(getWeekData(0));
-}
-
-renderHistory();
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
-
